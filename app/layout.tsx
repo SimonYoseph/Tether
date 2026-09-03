@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Tether | Pull ideas forward",
   description: "A living collection of thoughts worth carrying.",
   icons: {
-    icon: "/icon.png",
+    icon: "/tether.jpg",
   },
 };
 
