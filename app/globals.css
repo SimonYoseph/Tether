@@ -10,8 +10,8 @@ button { cursor: pointer; }
 .app-shell { max-width: 1240px; min-height: 100vh; margin: auto; padding: 26px 48px 28px; }
 .site-header, .header-actions, .brand, .header-link, .search-header, .global-search, .section-label, .notes-heading, .canvas-intro, .capture-footer, .tag-field, footer { display: flex; align-items: center; }
 .site-header { justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
-.brand { gap: 10px; color: var(--ink); font: 700 15px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; }
-.brand-mark { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 50%; background: var(--ink); color: var(--acid); font: 700 15px Georgia, serif; }
+.brand { gap: 12px; color: var(--ink); font: 700 19px Arial, sans-serif; letter-spacing: .04em; text-decoration: none; }
+.brand-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: var(--acid); color: var(--ink); font: 700 23px Georgia, serif; box-shadow: 3px 3px 0 var(--accent); }
 .header-actions { gap: 18px; }
 .icon-button, .header-link, .note-close { border: 0; background: transparent; color: var(--muted); }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
@@ -36,7 +36,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .capture-footer { justify-content: space-between; gap: 8px; padding: 9px 10px 9px 13px; }
 .tag-field { flex: 1; gap: 7px; color: var(--muted); }
 .tag-field input { min-width: 0; width: 100%; border: 0; background: transparent; color: var(--ink); outline: 0; font: 12px Arial, sans-serif; }
-.primary-button { display: flex; align-items: center; gap: 7px; border: 0; background: var(--ink); color: var(--acid); padding: 11px 14px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.primary-button { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; border: 0; background: var(--ink); color: var(--acid); padding: 13px 18px; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 .primary-button:hover { background: var(--accent); color: var(--ink); }
 .primary-button:disabled { cursor: not-allowed; opacity: .45; }
 .account-card { padding: 20px; color: var(--muted); }
