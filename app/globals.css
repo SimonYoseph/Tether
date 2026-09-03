@@ -115,11 +115,11 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .rail-bottom .icon-button { border-color: #31506b; color: #9eb4c4; }
 .rail-version { color: #5f7483; font: 9px Arial, sans-serif; }
 .dashboard { width: min(1180px, calc(100% - 96px)); margin: 0 auto; padding: 25px 0 30px; }
-.site-header { border: 0; padding: 0 0 24px; }
+.site-header { border: 0; padding: 0 0 8px; }
 .brand-wordmark { font-size: 31px; }
 .header-profile { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: transparent; color: #9eb4c4; }
-.search-header { display: grid; gap: 17px; border: 0; padding: 20px 0 24px; }
-.subheader-line { margin-left: 0; border: 0; padding: 0; color: #a6b8c4; font-size: 13px; letter-spacing: .04em; }
+.search-header { display: grid; gap: 17px; border: 0; padding: 5px 0 24px; }
+.subheader-line { margin-left: 73px; border: 0; padding: 0; color: #a6b8c4; font-size: 13px; letter-spacing: .04em; }
 .subheader-line b { color: #48aff5; }
 .search-tools { gap: 12px; }
 .global-search { width: 100%; border: 1px solid #213c55; border-radius: 8px; background: #111b25; padding: 13px 15px; }
