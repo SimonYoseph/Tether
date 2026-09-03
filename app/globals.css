@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
-:root { --ink: #182c3c; --muted: #71808b; --paper: #f4f1e9; --surface: #fcfbf6; --line: #d7ddd9; --accent: #ed7659; --acid: #d8ef72; }
-:root[data-theme="dark"] { --ink: #e9f0f2; --muted: #91a4ae; --paper: #081827; --surface: #10283a; --line: #244253; --accent: #ff8968; --acid: #d8ef72; }
+:root { --ink: #283746; --muted: #687989; --paper: #eef2f5; --surface: #ffffff; --line: #cbd4dc; --accent: #1685d2; --acid: #d9e9f4; }
+:root[data-theme="dark"] { --ink: #f1f6fa; --muted: #a5b6c4; --paper: #14283d; --surface: #203b57; --line: #38556f; --accent: #21a0f0; --acid: #c9e9fb; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, "Times New Roman", serif; transition: background .25s ease, color .25s ease; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter, Arial, sans-serif; transition: background .25s ease, color .25s ease; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 .app-shell { max-width: 1240px; min-height: 100vh; margin: auto; padding: 26px 48px 28px; }
 .site-header, .header-actions, .brand, .header-link, .search-header, .global-search, .section-label, .notes-heading, .canvas-intro, .capture-footer, .tag-field, footer { display: flex; align-items: center; }
 .site-header { justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
-.brand { color: var(--ink); text-decoration: none; }
-.brand-wordmark { display: flex; flex-direction: column; color: var(--ink); font: 400 40px/0.78 Herculaneum, "Bradley Hand", "Chalkboard SE", cursive; letter-spacing: .1em; transform: rotate(-2deg); }
-.brand-wordmark small { margin: 10px 0 0 5px; color: var(--accent); font: 400 15px/1 Herculaneum, "Bradley Hand", "Chalkboard SE", cursive; letter-spacing: .2em; }
+.brand { display: flex; align-items: center; gap: 13px; color: var(--ink); text-decoration: none; }
+.brand-mark { display: grid; width: 50px; height: 50px; place-items: center; border: 3px solid var(--ink); border-radius: 50%; background: var(--surface); color: var(--accent); box-shadow: 3px 3px 0 var(--accent); }
+.brand-wordmark { display: flex; flex-direction: column; color: var(--ink); font: 800 27px/0.9 Inter, Arial, sans-serif; letter-spacing: .05em; }
+.brand-wordmark small { margin: 8px 0 0 2px; color: var(--muted); font: 500 8px/1 Inter, Arial, sans-serif; letter-spacing: .2em; }
 .header-actions { gap: 18px; }
 .icon-button, .header-link, .note-close { border: 0; background: transparent; color: var(--muted); }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
@@ -21,7 +22,7 @@ button { cursor: pointer; }
 .search-header { justify-content: space-between; gap: 40px; padding: 83px 0 62px; }
 .overline, .section-label span, .note-count, .canvas-intro, footer, .capture-note, .note-top, kbd { font-family: Arial, sans-serif; }
 .overline { color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-h1 { margin: 17px 0 0; font-size: clamp(54px, 7vw, 94px); font-weight: 400; letter-spacing: -.06em; line-height: .9; }
+h1 { margin: 17px 0 0; color: var(--ink); font: 800 clamp(54px, 7vw, 94px)/.9 Inter, Arial, sans-serif; letter-spacing: -.06em; }
 .global-search { flex: 0 1 410px; gap: 11px; border-bottom: 1px solid var(--ink); padding: 11px 2px; color: var(--muted); }
 .global-search input { width: 100%; border: 0; background: transparent; color: var(--ink); outline: 0; font-size: 15px; }
 kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font-size: 10px; }
@@ -60,7 +61,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card-top { justify-content: space-between; gap: 8px; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
-.note-card > p { margin: 18px 0 4px; font-size: 16px; line-height: 1.25; }
+.note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 Inter, Arial, sans-serif; }
 .note-close { position: absolute; top: 7px; right: 7px; display: none; }
 .note-card:hover .note-close { display: block; }
 .empty { display: flex; height: 520px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font: 13px Arial, sans-serif; text-align: center; }
