@@ -12,7 +12,7 @@ button { cursor: pointer; }
 .site-header { justify-content: space-between; padding-bottom: 20px; }
 .brand { display: flex; align-items: center; gap: 13px; color: var(--ink); text-decoration: none; }
 .brand-logo { width: 60px; height: 60px; border: 2px solid var(--ink); border-radius: 50%; object-fit: cover; box-shadow: 3px 3px 0 var(--accent); }
-.brand-wordmark { display: flex; flex-direction: column; color: var(--ink); font: 800 34px/0.9 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; letter-spacing: .05em; }
+.brand-wordmark { display: flex; flex-direction: column; color: var(--ink); font: 800 34px/0.9 Inter, Arial, sans-serif; letter-spacing: .05em; }
 .header-actions { gap: 18px; }
 .icon-button, .header-link, .note-close { border: 0; background: transparent; color: var(--muted); }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
@@ -78,6 +78,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
 .note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; }
+.note-times { display: grid; gap: 3px; color: var(--muted); font: 8px/1.25 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; letter-spacing: .01em; text-align: right; }
 .note-close { position: absolute; top: 7px; right: 7px; display: none; }
 .note-card:hover .note-close { display: block; }
 .empty { display: flex; height: 520px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font: 13px Arial, sans-serif; text-align: center; }

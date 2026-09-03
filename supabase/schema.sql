@@ -5,8 +5,26 @@ create table public.tethers (
   description text,
   tags text[],
   is_public boolean default false,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+alter table public.tethers add column if not exists updated_at timestamp with time zone default timezone('utc'::text, now()) not null;
+
+create or replace function public.set_tether_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc'::text, now());
+  return new;
+end;
+$$;
+
+drop trigger if exists set_tethers_updated_at on public.tethers;
+create trigger set_tethers_updated_at
+before update on public.tethers
+for each row execute function public.set_tether_updated_at();
 
 create table public.tether_pulls (
   id uuid default gen_random_uuid() primary key,
