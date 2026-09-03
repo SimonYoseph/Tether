@@ -7,7 +7,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; transition: background .25s ease, color .25s ease; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
-.app-shell { width: min(1240px, calc(100% - 96px)); max-width: 1240px; min-height: 100vh; margin: auto; padding: 26px 48px 28px; }
+.app-shell { width: min(1240px, calc(100% - 96px)); max-width: 1240px; min-height: 100vh; margin: auto; padding: 26px 48px 28px; font-family: var(--ui-font); }
 .site-header, .header-actions, .brand, .header-link, .search-header, .search-tools, .global-search, .section-label, .notes-heading, .canvas-intro, .capture-footer, .tag-field, .tag-tools, .tag-tools button, footer { display: flex; align-items: center; }
 .site-header { justify-content: space-between; padding-bottom: 20px; }
 .brand { display: flex; align-items: center; gap: 13px; color: var(--ink); text-decoration: none; }
@@ -20,7 +20,8 @@ button { cursor: pointer; }
 .header-link { gap: 6px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .search-header { display: grid; gap: 20px; border-bottom: 1px solid var(--line); padding: 12px 0 30px; }
 .overline, .section-label span, .note-count, .canvas-intro, footer, .capture-note, .note-top, kbd { font-family: Arial, sans-serif; }
-.subheader-line { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 17px; color: var(--ink); font: 600 15px/1 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; letter-spacing: .03em; }
+.subheader-line { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 17px; color: var(--ink); font: 600 15px/1 Inter, Arial, sans-serif; letter-spacing: .03em; }
+.subheader-line { margin-left: 73px; }
 .subheader-line b { color: var(--accent); font-weight: 400; }
 .subheader-line strong { font-weight: 400; }
 .global-search { width: 50%; gap: 11px; border-bottom: 1px solid var(--ink); padding: 11px 2px; color: var(--muted); transition: width .25s ease; }
@@ -32,6 +33,8 @@ button { cursor: pointer; }
 .tag-tools button { gap: 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 8px 12px; font: 700 10px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .tag-tools button:hover { border-color: var(--accent); color: var(--accent); }
 .tag-tools span { color: var(--muted); font: 10px Arial, sans-serif; }
+.font-picker { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); color: var(--muted); padding: 7px 10px; font: 700 10px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+.font-picker select { border: 0; background: transparent; color: var(--ink); outline: 0; font: 11px var(--ui-font); text-transform: none; }
 .global-search input { width: 100%; border: 0; background: transparent; color: var(--ink); outline: 0; font-size: 15px; }
 kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font-size: 10px; }
 .workspace { display: block; }
@@ -75,10 +78,10 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: rotate(1deg) scale(1.02); box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
 .note-card-top, .note-tags { display: flex; align-items: center; }
 .note-card-top { justify-content: space-between; gap: 8px; }
-.note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+.note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
-.note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; }
-.note-times { display: grid; gap: 3px; color: var(--muted); font: 8px/1.25 "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; letter-spacing: .01em; text-align: right; }
+.note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 var(--ui-font); }
+.note-times { display: grid; gap: 3px; color: var(--muted); font: 8px/1.25 var(--ui-font); letter-spacing: .01em; text-align: right; }
 .note-close { position: absolute; top: 7px; right: 7px; display: none; }
 .note-card:hover .note-close { display: block; }
 .empty { display: flex; height: 520px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font: 13px Arial, sans-serif; text-align: center; }
@@ -90,4 +93,4 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .audience-list span { border: 1px solid var(--line); border-radius: 20px; padding: 8px 11px; color: var(--muted); font: 10px Arial, sans-serif; }
 footer { justify-content: space-between; color: var(--muted); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 760px) { .app-shell { width: 100%; padding: 20px; } .site-header { align-items: flex-start; } .brand-logo { width: 52px; height: 52px; } .brand-wordmark { font-size: 29px; } .search-header { gap: 18px; padding: 9px 0 28px; } .subheader-line { gap: 8px; padding-bottom: 13px; font-size: 14px; } .notes-panel { margin-top: 38px; } .notes-canvas { min-height: 660px; } .note-card { width: min(230px, 65%); } .audience-strip { display: block; margin-top: 75px; } .audience-list { margin-top: 25px; } footer { flex-wrap: wrap; gap: 12px; padding-top: 20px; } }
+@media (max-width: 760px) { .app-shell { width: 100%; padding: 20px; } .site-header { align-items: flex-start; } .brand-logo { width: 52px; height: 52px; } .brand-wordmark { font-size: 29px; } .search-header { gap: 18px; padding: 9px 0 28px; } .subheader-line { gap: 8px; margin-left: 65px; padding-bottom: 13px; font-size: 14px; } .notes-panel { margin-top: 38px; } .notes-canvas { min-height: 660px; } .note-card { width: min(230px, 65%); } .audience-strip { display: block; margin-top: 75px; } .audience-list { margin-top: 25px; } footer { flex-wrap: wrap; gap: 12px; padding-top: 20px; } }
