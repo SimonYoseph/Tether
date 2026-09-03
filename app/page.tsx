@@ -79,7 +79,7 @@ export default function Home() {
 
   return (
     <main className="shell">
-      <header className="topbar"><Link className="brand" href="/" aria-label="Tether home"><span className="brand-mark"><Link2 size={18} /></span>TETHER</Link>{user ? <button className="button button-quiet" onClick={() => void supabase.auth.signOut()}><LogOut size={16} /> Sign out</button> : <span className="status-dot">Open network</span>}</header>
+      <header className="topbar"><Link className="brand" href="/" aria-label="Tether home"><span className="brand-mark"><Link2 size={18} /></span>Tether</Link>{user ? <button className="button button-quiet" onClick={() => void supabase.auth.signOut()}><LogOut size={16} /> Sign out</button> : <span className="status-dot">Open network</span>}</header>
       <section className="hero"><div className="eyebrow"><Sparkles size={14} /> Ideas worth carrying</div><h1>Find the thread.<br /><em>Pull it forward.</em></h1><p>A living collection of thoughts, references, and sparks shared by people building what comes next.</p></section>
       <section className="workspace">
         <aside className="composer panel"><div className="panel-heading"><span className="number">01</span><div><h2>Make a tether</h2><p>Leave something useful behind.</p></div></div>
