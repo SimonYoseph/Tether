@@ -138,7 +138,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .connection-strip strong { color: #dae8f0; font-size: 12px; }
 .connection-strip small { font: 10px var(--ui-font); }
 .connected-state { margin-left: auto; color: #6acb94; font: 10px Arial, sans-serif; }
-.add-note-panel { width: 100%; max-width: none; border: 1px solid #294761; border-radius: 9px; background: #111b25; padding: 18px; }
+.add-note-panel { width: 100%; max-width: none; max-height: 0; overflow: hidden; border: 0 solid #294761; border-radius: 9px; background: #111b25; opacity: 0; padding: 0 18px; pointer-events: none; transform: translateY(-10px); transition: max-height .42s cubic-bezier(.22, 1, .36, 1), opacity .24s ease, padding .42s cubic-bezier(.22, 1, .36, 1), border-width .42s ease, transform .42s cubic-bezier(.22, 1, .36, 1); }
+.add-note-panel.is-open { max-height: 700px; border-width: 1px; opacity: 1; padding: 18px; pointer-events: auto; transform: translateY(0); }
 .add-note-panel .capture-form { border: 0; background: transparent; }
 .add-note-panel .capture-form > input, .add-note-panel .capture-form textarea { color: #edf3f7; }
 .add-note-panel .capture-footer { border-top: 1px solid #294761; }
