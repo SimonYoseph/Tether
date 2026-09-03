@@ -42,6 +42,7 @@ kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font
 .add-note-panel.has-content { width: 100%; }
 .add-note-heading { display: flex; align-items: center; justify-content: space-between; }
 .add-note-heading h2 { margin: 8px 0 0; font-size: 24px; font-weight: 400; }
+.add-note-heading h2 { display: none; }
 .section-label-text { color: var(--accent); font: 700 10px Arial, sans-serif; letter-spacing: .12em; }
 .close-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted); }
 .close-button:hover { color: var(--accent); }
