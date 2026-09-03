@@ -20,7 +20,7 @@ button { cursor: pointer; }
 .header-link { gap: 6px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .search-header { display: grid; gap: 26px; border-bottom: 1px solid var(--line); padding: 12px 0 30px; }
 .overline, .section-label span, .note-count, .canvas-intro, footer, .capture-note, .note-top, kbd { font-family: Arial, sans-serif; }
-.subheader-line { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 17px; color: var(--ink); font: 500 17px/1 Inter, Arial, sans-serif; letter-spacing: .05em; }
+.subheader-line { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 17px; color: var(--ink); font: 400 17px/1 Herculaneum, "Bradley Hand", "Chalkboard SE", cursive; letter-spacing: .08em; }
 .subheader-line b { color: var(--accent); font-weight: 400; }
 .subheader-line strong { font-weight: 400; }
 .global-search { width: 50%; gap: 11px; border-bottom: 1px solid var(--ink); padding: 11px 2px; color: var(--muted); transition: width .25s ease; }
