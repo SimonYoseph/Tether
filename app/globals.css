@@ -143,7 +143,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .add-note-panel.is-open { max-height: 700px; border-width: 1px; opacity: 1; padding: 18px; pointer-events: auto; transform: translateY(0); }
 .add-note-panel .capture-form { border: 0; background: transparent; }
 .add-note-panel .capture-form > input, .add-note-panel .capture-form textarea { color: #edf3f7; }
-.add-note-panel .capture-form > input:first-child { width: 46px; height: 46px; border: 1px solid #31506b; border-radius: 50%; background: #172a3d url("/title-icon.svg") center / 24px 24px no-repeat; padding: 0; color: transparent; text-align: center; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
+.add-note-panel .capture-form > input:first-child { width: 46px; height: 46px; border: 1px solid #48aff5; border-radius: 50%; background: #1685d2 url("/title-icon.svg?v=2") center / 24px 24px no-repeat; padding: 0; color: transparent; text-align: center; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
 .add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { width: 100%; border-radius: 7px; padding: 14px; color: #edf3f7; text-align: left; }
 .add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { background-image: none; }
 .add-note-panel .capture-form > input:first-child::placeholder { color: transparent; }
