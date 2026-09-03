@@ -20,9 +20,9 @@ button { cursor: pointer; }
 .header-link { gap: 6px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
 .search-header { display: grid; gap: 26px; border-bottom: 1px solid var(--line); padding: 25px 0 30px; }
 .overline, .section-label span, .note-count, .canvas-intro, footer, .capture-note, .note-top, kbd { font-family: Arial, sans-serif; }
-.subheader-line { display: flex; align-items: center; gap: 14px; color: var(--ink); font: 600 22px/1.2 Inter, Arial, sans-serif; letter-spacing: -.03em; }
+.subheader-line { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 17px; color: var(--ink); font: 400 17px/1 Herculaneum, "Bradley Hand", "Chalkboard SE", cursive; letter-spacing: .08em; }
 .subheader-line b { color: var(--accent); font-weight: 400; }
-.subheader-line strong { font-weight: 600; }
+.subheader-line strong { font-weight: 400; }
 .global-search { width: 50%; gap: 11px; border-bottom: 1px solid var(--ink); padding: 11px 2px; color: var(--muted); transition: width .25s ease; }
 .global-search:focus-within { width: 100%; }
 .global-search input { width: 100%; border: 0; background: transparent; color: var(--ink); outline: 0; font-size: 15px; }
@@ -74,4 +74,4 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .audience-list span { border: 1px solid var(--line); border-radius: 20px; padding: 8px 11px; color: var(--muted); font: 10px Arial, sans-serif; }
 footer { justify-content: space-between; color: var(--muted); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 760px) { .app-shell { padding: 20px; } .site-header { align-items: flex-start; } .brand-logo { width: 52px; height: 52px; } .brand-wordmark { font-size: 29px; } .search-header { gap: 22px; padding: 24px 0 28px; } .subheader-line { gap: 9px; font-size: 16px; } .global-search { width: 50%; } .workspace { grid-template-columns: 1fr; gap: 64px; } .notes-canvas { min-height: 660px; } .note-card { width: min(230px, 65%); } .audience-strip { display: block; margin-top: 75px; } .audience-list { margin-top: 25px; } footer { flex-wrap: wrap; gap: 12px; padding-top: 20px; } }
+@media (max-width: 760px) { .app-shell { padding: 20px; } .site-header { align-items: flex-start; } .brand-logo { width: 52px; height: 52px; } .brand-wordmark { font-size: 29px; } .search-header { gap: 22px; padding: 24px 0 28px; } .subheader-line { gap: 8px; padding-bottom: 13px; font-size: 14px; } .global-search { width: 50%; } .workspace { grid-template-columns: 1fr; gap: 64px; } .notes-canvas { min-height: 660px; } .note-card { width: min(230px, 65%); } .audience-strip { display: block; margin-top: 75px; } .audience-list { margin-top: 25px; } footer { flex-wrap: wrap; gap: 12px; padding-top: 20px; } }
