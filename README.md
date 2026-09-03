@@ -22,7 +22,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 2. Run `supabase/schema.sql` in the Supabase SQL Editor.
 3. In Supabase Authentication > Providers, enable Email.
 
-The app uses `lib/supabase.ts` for browser access, `lib/supabase-server.ts` for server access, and `proxy.ts` to refresh the auth session in the Next.js App Router.
+The app uses `lib/supabase.ts` for browser access, `lib/supabase-server.ts` for server access, and `proxy.ts` to refresh the auth session in the Next.js App Router. Notes are private by default.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

@@ -4,7 +4,7 @@ create table public.tethers (
   title text not null,
   description text,
   tags text[],
-  is_public boolean default true,
+  is_public boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
