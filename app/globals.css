@@ -109,7 +109,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .notes-heading { justify-content: space-between; }
 .note-count { color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .canvas-intro { justify-content: space-between; margin: 15px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
-.notes-canvas { position: relative; min-height: 540px; overflow: hidden; }
+.notes-canvas { position: relative; min-height: 540px; overflow: visible; }
 .note-card { position: absolute; width: min(240px, 45%); min-height: 118px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 5px 5px 0 color-mix(in srgb, var(--line) 48%, transparent); padding: 14px; touch-action: none; user-select: none; transition: box-shadow .15s ease, transform .15s ease; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: rotate(1deg) scale(1.02); box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }

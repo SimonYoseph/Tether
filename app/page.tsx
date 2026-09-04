@@ -165,6 +165,7 @@ export default function Home() {
     useState<keyof typeof fontOptions>("courier");
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
+  const dragStartPoint = useRef<Point | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
   const [trashHover, setTrashHover] = useState(false);
   useEffect(() => {
@@ -270,11 +271,11 @@ export default function Home() {
     const bounds = canvas.getBoundingClientRect();
     const point = {
       x: Math.max(
-        0,
+        -20,
         Math.min(78, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
       ),
       y: Math.max(
-        0,
+        -20,
         Math.min(82, ((event.clientY - bounds.top - dragRef.current.offsetY) / bounds.height) * 100),
       ),
     };
@@ -292,17 +293,28 @@ export default function Home() {
     setDragging(null);
     dragRef.current = null;
     setTrashHover(false);
-    if (!trashBounds || noteBounds.right < trashBounds.left || noteBounds.left > trashBounds.right || noteBounds.bottom < trashBounds.top || noteBounds.top > trashBounds.bottom) return;
+    if (!trashBounds || noteBounds.right < trashBounds.left || noteBounds.left > trashBounds.right || noteBounds.bottom < trashBounds.top || noteBounds.top > trashBounds.bottom) {
+      dragStartPoint.current = null;
+      return;
+    }
+    if (!window.confirm("Move this note to Trash?")) {
+      if (dragStartPoint.current) setPositions((current) => ({ ...current, [id]: dragStartPoint.current as Point }));
+      dragStartPoint.current = null;
+      return;
+    }
     if (isSupabaseConfigured && user) {
       const { error } = await supabase.from("tethers").delete().eq("id", id).eq("user_id", user.id);
       if (error) return setMessage(error.message);
     }
     setNotes((current) => current.filter((note) => note.id !== id));
+    dragStartPoint.current = null;
   }
   function startDragging(event: PointerEvent<HTMLElement>, id: string) {
     const canvas = event.currentTarget.parentElement;
     if (!canvas) return;
     const noteBounds = event.currentTarget.getBoundingClientRect();
+    const bounds = canvas.getBoundingClientRect();
+    dragStartPoint.current = positions[id] ?? { x: ((noteBounds.left - bounds.left) / bounds.width) * 100, y: ((noteBounds.top - bounds.top) / bounds.height) * 100 };
     dragRef.current = { id, offsetX: event.clientX - noteBounds.left, offsetY: event.clientY - noteBounds.top };
     setDragging(id);
     event.currentTarget.setPointerCapture(event.pointerId);
