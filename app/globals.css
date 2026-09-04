@@ -188,6 +188,20 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .notes-heading { border: 0; }
 .canvas-intro { margin-top: 9px; }
 .notes-canvas { min-height: 620px; border: 0; background: #06090d; }
+:root[data-theme="black"] .profile-button { border-color: #31506b; background: #172a3d; color: #d6edfc; }
+:root[data-theme="black"] .profile-menu { border-color: #294761; background: #111b25; color: #dfeaf0; }
+:root[data-theme="black"] .profile-heading > svg, :root[data-theme="black"] .profile-button:hover { color: #48aff5; }
+:root[data-theme="charcoal"] .profile-button { border-color: #56616d; background: #3b424a; color: #f0f3f5; }
+:root[data-theme="charcoal"] .profile-menu { border-color: #59636d; background: #30363d; color: #f0f3f5; }
+:root[data-theme="charcoal"] .profile-heading > svg, :root[data-theme="charcoal"] .profile-button:hover { color: #8bc9f2; }
+:root[data-theme="light"] .profile-button { border-color: #b9c6d0; background: #ffffff; color: #283746; }
+:root[data-theme="light"] .profile-menu { border-color: #cbd4dc; background: #ffffff; color: #283746; box-shadow: 0 18px 45px rgba(40, 55, 70, .16); }
+:root[data-theme="light"] .profile-heading > svg, :root[data-theme="light"] .profile-button:hover { color: #1685d2; }
+:root[data-theme="light"] .profile-heading small, :root[data-theme="light"] .menu-title { color: #687989; }
+:root[data-theme="light"] .menu-divider, :root[data-theme="light"] .menu-signout { border-color: #cbd4dc; }
+:root[data-theme="light"] .menu-toggle, :root[data-theme="light"] .menu-row, :root[data-theme="light"] .theme-options { color: #283746; }
+:root[data-theme="light"] .theme-options button { border-color: #b9c6d0; color: #687989; }
+:root[data-theme="light"] .theme-options button.selected { border-color: #1685d2; background: #d9e9f4; color: #283746; }
 .note-card { border: 1px solid #294761; border-radius: 8px; background: #151f29; box-shadow: 0 10px 24px rgba(0, 0, 0, .22); }
 .note-card:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, .36); }
 .note-card.is-dragging { box-shadow: 0 15px 35px rgba(0, 0, 0, .5); }
