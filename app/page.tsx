@@ -161,6 +161,9 @@ export default function Home() {
   const [newTagColor, setNewTagColor] = useState(tagColorPresets[0]);
   const [newTagColorHex, setNewTagColorHex] = useState(tagColorPresets[0]);
   const [customColorOpen, setCustomColorOpen] = useState(false);
+  const [tagEditorOpen, setTagEditorOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [tagEditValue, setTagEditValue] = useState("");
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
@@ -224,6 +227,7 @@ export default function Home() {
       if (!tagToolsRef.current?.contains(event.target as Node)) {
         setTagPickerOpen(false);
         setCustomColorOpen(false);
+        setTagEditorOpen(false);
       }
     }
     document.addEventListener("mousedown", closeTagPicker);
@@ -417,7 +421,36 @@ export default function Home() {
     setNewTagColorHex(tagColorPresets[0]);
     setCustomColorOpen(false);
     setTagPickerOpen(false);
-    setAddOpen(true);
+  }
+
+  async function replaceTag(currentTag: string, replacement?: string) {
+    const nextTag = replacement?.trim().replace(/\s+/g, "-");
+    if (replacement && !nextTag) return;
+    const changedNotes = notes.filter((note) => note.tags?.includes(currentTag));
+    const updatedNotes = notes.map((note) => ({
+      ...note,
+      tags: note.tags?.flatMap((tag) => tag === currentTag ? (nextTag ? [nextTag] : []) : [tag]) ?? [],
+    }));
+    if (isSupabaseConfigured && user && changedNotes.length) {
+      const results = await Promise.all(changedNotes.map((note) => {
+        const updated = updatedNotes.find((item) => item.id === note.id);
+        return supabase.from("tethers").update({ tags: updated?.tags ?? [] }).eq("id", note.id).eq("user_id", user.id);
+      }));
+      const error = results.find((result) => result.error)?.error;
+      if (error) return setMessage(error.message);
+    }
+    setNotes(updatedNotes);
+    setTagsInput((current) => current.split(",").map((tag) => tag.trim()).filter(Boolean).flatMap((tag) => tag === currentTag ? (nextTag ? [nextTag] : []) : [tag]).join(", "));
+    setTagColors((current) => {
+      const next = { ...current };
+      const color = next[currentTag];
+      delete next[currentTag];
+      if (nextTag && color) next[nextTag] = color;
+      window.localStorage.setItem("tether-tag-colors", JSON.stringify(next));
+      return next;
+    });
+    setSelectedTag(null);
+    setTagEditValue("");
   }
 
   function updateTagColorHex(value: string) {
@@ -511,13 +544,14 @@ export default function Home() {
             </button>
           </div>
           <div className="tag-tools" ref={tagToolsRef}>
-            <button onClick={() => { setTagPickerOpen(!tagPickerOpen); setCustomColorOpen(false); }} aria-expanded={tagPickerOpen}>
+            <button onClick={() => { setTagPickerOpen(!tagPickerOpen); setCustomColorOpen(false); setTagEditorOpen(false); }} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
             {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setNewTagColor(color); setNewTagColorHex(color); setCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${customColorOpen ? "selected" : ""}`} aria-label="Choose a custom tag color" aria-expanded={customColorOpen} onClick={() => setCustomColorOpen(!customColorOpen)}><Palette size={13} /></button>{customColorOpen && <div className="custom-color-menu"><label className="tag-color-picker">Color wheel<input type="color" value={newTagColor} onChange={(event) => { setNewTagColor(event.target.value); setNewTagColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={newTagColorHex} onChange={(event) => updateTagColorHex(event.target.value)} placeholder="#48aff5" aria-label="Custom tag color hex" /></div>}</div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
-            <button>
+            <button onClick={() => { setTagEditorOpen(!tagEditorOpen); setTagPickerOpen(false); setCustomColorOpen(false); setSelectedTag(null); }} aria-expanded={tagEditorOpen}>
               <Edit3 size={15} /> Edit Tags
             </button>
+            {tagEditorOpen && <div className="tag-editor-menu"><strong>Edit tags</strong>{visibleTags.length ? <div className="tag-editor-list">{visibleTags.map((tag) => <button type="button" className={selectedTag === tag ? "selected" : ""} key={tag} onClick={() => { setSelectedTag(tag); setTagEditValue(tag); }}><Hash size={12} /> {tag}</button>)}</div> : <span>No tags yet.</span>}{selectedTag && <form className="tag-editor-form" onSubmit={(event) => { event.preventDefault(); void replaceTag(selectedTag, tagEditValue); }}><input value={tagEditValue} onChange={(event) => setTagEditValue(event.target.value)} aria-label="Edit tag name" /><button type="submit">Save</button><button type="button" className="delete-tag-button" onClick={() => void replaceTag(selectedTag)} aria-label="Delete tag"><Trash2 size={13} /></button></form>}</div>}
             {visibleTags.map((tag) => (
               <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={12} /> {tag}</span>
             ))}
