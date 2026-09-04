@@ -108,7 +108,7 @@ button { cursor: pointer; }
 .tag-editor-custom-controls { display: grid; max-height: 0; gap: 8px; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(-5px); transition: max-height .3s cubic-bezier(.22, 1, .36, 1), opacity .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
 .tag-editor-custom-controls.is-open { max-height: 100px; opacity: 1; pointer-events: auto; transform: translateY(0); }
 .tag-editor-actions { display: flex; gap: 6px; }
-.tag-editor-actions > button:first-child { flex: 1; }
+.tag-editor-actions > button:nth-child(2) { flex: 1; }
 .tag-editor-form .delete-tag-button { display: grid; place-items: center; border-color: #85433f; color: #ff8f83; }
 .font-picker { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); color: var(--muted); padding: 7px 10px; font: 700 10px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .font-picker select { border: 0; background: transparent; color: var(--ink); outline: 0; font: 11px var(--ui-font); text-transform: none; }
