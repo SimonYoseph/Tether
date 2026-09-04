@@ -217,6 +217,7 @@ export default function Home() {
   const [fontChoice, setFontChoice] =
     useState<keyof typeof fontOptions>("courier");
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
+  const editBodyRef = useRef<HTMLTextAreaElement>(null);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number; point: Point } | null>(null);
   const dragStartPoint = useRef<Point | null>(null);
   const resizeRef = useRef<{ id: string; edge: string; startX: number; startY: number; startWidth: number; startHeight: number; minWidth: number; minHeight: number; startPoint: Point; element: HTMLElement } | null>(null);
@@ -659,6 +660,23 @@ export default function Home() {
       textarea.setSelectionRange(start + insertion.length, start + insertion.length);
     });
   }
+  function insertEditList(marker: "- " | "1. ") {
+    const textarea = editBodyRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const needsNewLine = start > 0 && editBody[start - 1] !== "\n";
+    const lastLine = editBody.slice(0, start).split("\n").reverse().find((line) => line.trim());
+    const lastNumber = marker === "1. " ? lastLine?.match(/^\s*(\d+)[.)]\s+/)?.[1] : undefined;
+    const nextMarker = lastNumber ? `${Number(lastNumber) + 1}. ` : marker;
+    const insertion = `${needsNewLine ? "\n" : ""}${nextMarker}`;
+    const nextValue = `${editBody.slice(0, start)}${insertion}${editBody.slice(end)}`;
+    setEditBody(nextValue);
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + insertion.length, start + insertion.length);
+    });
+  }
   function applyKeywordTags(currentTags: string[], noteTitleValue: string, noteBody: string, rules = tagKeywords) {
     const searchableText = `${noteTitleValue} ${noteBody}`.toLowerCase();
     const matchingTags = Object.entries(rules).flatMap(([tag, keywords]) =>
@@ -1021,7 +1039,7 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input className="note-edit-title" value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title" /><textarea className="note-edit-body" autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} placeholder="Write your note..." /><label className="note-edit-tags"><Tag size={13} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Add tags" /></label><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={requestEditExit}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div><div className="note-resize-handles" aria-label="Resize note">{["n", "e", "s", "w", "ne", "se", "sw", "nw"].map((edge) => <button type="button" key={edge} aria-label={`Resize note ${edge}`} className={`resize-handle resize-${edge}`} onPointerDown={(event) => startResize(event, note.id, edge)} onPointerMove={resizeNote} onPointerUp={stopResize} />)}</div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
+                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input className="note-edit-title" value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title" /><textarea ref={editBodyRef} className="note-edit-body" autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} placeholder="Write your note..." /><div className="note-edit-list-tools" aria-label="Insert list"><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertEditList("- ")} aria-label="Insert bullet list">•</button><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertEditList("1. ")} aria-label="Insert numbered list">1.</button></div><label className="note-edit-tags"><Tag size={13} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Add tags" /></label><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={requestEditExit}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div><div className="note-resize-handles" aria-label="Resize note">{["n", "e", "s", "w", "ne", "se", "sw", "nw"].map((edge) => <button type="button" key={edge} aria-label={`Resize note ${edge}`} className={`resize-handle resize-${edge}`} onPointerDown={(event) => startResize(event, note.id, edge)} onPointerMove={resizeNote} onPointerUp={stopResize} />)}</div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
                   </article>
                 );
               })

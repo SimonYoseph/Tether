@@ -86,7 +86,8 @@ button { cursor: pointer; }
 .tag-tools { position: relative; }
 .tag-picker-menu, .tag-editor-menu { position: absolute; z-index: 25; top: 38px; display: grid; width: 240px; max-height: 0; gap: 10px; overflow: hidden; border: 1px solid transparent; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); color: #dfeaf0; opacity: 0; padding: 0 13px; pointer-events: none; transform: translateY(-8px) scaleY(.97); transform-origin: top; transition: max-height .4s cubic-bezier(.22, 1, .36, 1), opacity .25s ease, padding .4s cubic-bezier(.22, 1, .36, 1), transform .4s cubic-bezier(.22, 1, .36, 1), border-color .2s ease; }
 .tag-picker-menu { left: 0; }
-.tag-picker-menu.is-open, .tag-editor-menu.is-open { max-height: 390px; border-color: #294761; opacity: 1; padding: 13px; pointer-events: auto; transform: translateY(0) scaleY(1); }
+.tag-picker-menu.is-open { max-height: 390px; border-color: #294761; opacity: 1; padding: 13px; pointer-events: auto; transform: translateY(0) scaleY(1); }
+.tag-editor-menu.is-open { max-height: min(620px, calc(100vh - 110px)); overflow-y: auto; border-color: #294761; opacity: 1; padding: 13px; pointer-events: auto; transform: translateY(0) scaleY(1); }
 .tag-picker-menu strong { font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .tag-type-buttons, .tag-entry { display: flex; gap: 6px; }
 .tag-type-buttons button, .tag-entry button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #9eb4c4; padding: 7px 8px; font: 10px var(--ui-font); }
@@ -177,6 +178,9 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-edit-title, .note-edit-body, .note-edit-tags input { width: 100%; border: 0; background: transparent; color: inherit; outline: 0; padding: 0; font-family: var(--ui-font); }
 .note-edit-title { font-size: 19px; font-weight: 800; line-height: 1.25; }
 .note-edit-body { min-height: 100px; resize: none; font-size: 15px; line-height: 1.5; }
+.note-edit-list-tools { display: flex; gap: 7px; }
+.note-edit-list-tools button { display: grid; width: 28px; height: 26px; place-items: center; border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #d6edfc; font: 800 12px var(--ui-font); }
+.note-edit-list-tools button:hover { border-color: #48aff5; color: #48aff5; }
 .note-edit-tags { display: flex; align-items: center; gap: 7px; border-top: 1px solid #294761; padding-top: 10px; color: #8fa6b5; }
 .note-edit-tags input { min-width: 0; font-size: 11px; }
 .note-edit-title:focus, .note-edit-body:focus, .note-edit-tags:focus-within { box-shadow: inset 0 -1px 0 #48aff5; }
