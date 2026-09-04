@@ -75,12 +75,9 @@ const demoNotes: Note[] = [
     created_at: "2026-09-02T15:22:00",
   },
 ];
-const defaultPoints: Point[] = [
-  { x: 4, y: 5 },
-  { x: 40, y: 14 },
-  { x: 18, y: 48 },
-  { x: 60, y: 54 },
-];
+function initialNotePoint(index: number, total: number): Point {
+  return { x: 4, y: 4 + (index * 88) / Math.max(total, 1) };
+}
 function noteTitle(body: string, title: string) {
   return (
     title.trim() || body.trim().split("\n")[0].slice(0, 80) || "Untitled note"
@@ -778,7 +775,7 @@ export default function Home() {
             <span>Drag notes anywhere <i className="hint-divider" /> <b className="note-count">{visibleNotes.length} saved</b></span>
             <span>{sortOldest ? "Oldest first" : "Newest first"}</span>
           </div>
-          <div className="notes-canvas">
+          <div className="notes-canvas" style={{ minHeight: `${Math.max(540, visibleNotes.length * 340)}px` }}>
             {loading ? (
               <div className="empty">
                 <LoaderCircle className="spin" size={20} /> Loading...
@@ -790,9 +787,7 @@ export default function Home() {
               </div>
             ) : (
               visibleNotes.map((note, index) => {
-                const point =
-                  positions[note.id] ??
-                  defaultPoints[index % defaultPoints.length];
+                const point = positions[note.id] ?? initialNotePoint(index, visibleNotes.length);
                 const noteTagColor = note.tags?.map((tag) => tagColors[tag]).find(Boolean);
                 return (
                   <article
