@@ -270,3 +270,11 @@ footer { margin-top: 30px; color: #5f7483; }
 
 .dashboard > *:not(.site-header), .dashboard > *:not(.site-header) * { font-family: "Courier New", Courier, monospace; font-weight: 700; }
 .font-picker { display: none; }
+:root[data-theme="light"] .dashboard { color: #283746; }
+:root[data-theme="light"] .subheader-line, :root[data-theme="light"] .section-label h2, :root[data-theme="light"] .note-count, :root[data-theme="light"] .canvas-intro, :root[data-theme="light"] .note-times, :root[data-theme="light"] footer { color: #425665; }
+:root[data-theme="light"] .tag-tools button, :root[data-theme="light"] .font-picker, :root[data-theme="light"] .view-options-button, :root[data-theme="light"] .trash-button { color: #425665; border-color: #b8c6d0; }
+:root[data-theme="light"] .tag-tools span { color: #526a79; }
+:root[data-theme="light"] .connection-strip { color: #526a79; }
+:root[data-theme="light"] .connection-strip strong { color: #283746; }
+:root[data-theme="light"] .connection-strip small { color: #526a79; }
+:root[data-theme="light"] .add-note-panel .capture-form > input, :root[data-theme="light"] .add-note-panel .capture-form textarea { color: #283746; }
