@@ -117,8 +117,8 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card-top { justify-content: space-between; gap: 8px; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
-.note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 var(--ui-font); }
-.note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 700 14px/1.3 var(--ui-font); }
+.note-card > p { margin: 18px 0 4px; color: var(--ink); font: 600 16px/1.3 var(--ui-font); text-align: left; }
+.note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 700 14px/1.3 var(--ui-font); text-align: left; }
 .list-tools { display: flex; gap: 8px; padding: 8px 14px 0; }
 .list-tools button { display: grid; width: 30px; height: 28px; place-items: center; border: 1px solid #294761; border-radius: 6px; background: #172a3d; color: #d6edfc; font: 700 13px var(--ui-font); }
 .list-tools button:hover { border-color: #48aff5; color: #48aff5; }

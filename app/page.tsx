@@ -272,7 +272,7 @@ export default function Home() {
     const point = {
       x: Math.max(
         -20,
-        Math.min(78, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
+        Math.min(100, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
       ),
       y: Math.max(
         -20,
