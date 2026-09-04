@@ -16,6 +16,7 @@ import {
   Check,
   CircleUserRound,
   Edit3,
+  Hash,
   Link2,
   LoaderCircle,
   LogOut,
@@ -38,6 +39,7 @@ type Note = {
 };
 type Point = { x: number; y: number };
 type Theme = "light" | "charcoal" | "black";
+const tagColorPresets = ["#48aff5", "#ff927b", "#f5c85b", "#73d39a", "#b698ff"];
 const fontOptions = {
   courier: '"Courier New", Courier, monospace',
   rounded: '"Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif',
@@ -155,6 +157,8 @@ export default function Home() {
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
   const [tagType, setTagType] = useState<"main" | "sub">("main");
   const [newTag, setNewTag] = useState("");
+  const [newTagColor, setNewTagColor] = useState(tagColorPresets[0]);
+  const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
   const [dragging, setDragging] = useState<string | null>(null);
@@ -189,6 +193,8 @@ export default function Home() {
         document.documentElement.dataset.theme = savedTheme;
       }
       setStructured(window.localStorage.getItem("tether-structured-view") === "true");
+      const savedTagColors = window.localStorage.getItem("tether-tag-colors");
+      if (savedTagColors) setTagColors(JSON.parse(savedTagColors));
       if (!isSupabaseConfigured) {
         setNotes(demoNotes);
         setLoading(false);
@@ -229,6 +235,10 @@ export default function Home() {
   const allTags = useMemo(
     () => Array.from(new Set(notes.flatMap((note) => note.tags ?? []))),
     [notes],
+  );
+  const visibleTags = useMemo(
+    () => Array.from(new Set([...allTags, ...tagsInput.split(",").map((tag) => tag.trim()).filter(Boolean)])),
+    [allTags, tagsInput],
   );
   function chooseTheme(nextTheme: Theme) {
     setTheme(nextTheme);
@@ -384,8 +394,12 @@ export default function Home() {
   function addTag() {
     if (!newTag.trim()) return;
     const tag = `${tagType}:${newTag.trim().replace(/\s+/g, "-")}`;
+    const nextColors = { ...tagColors, [tag]: newTagColor };
+    setTagColors(nextColors);
+    window.localStorage.setItem("tether-tag-colors", JSON.stringify(nextColors));
     setTagsInput((current) => (current ? `${current}, ${tag}` : tag));
     setNewTag("");
+    setNewTagColor(tagColorPresets[0]);
     setTagPickerOpen(false);
     setAddOpen(true);
   }
@@ -477,10 +491,13 @@ export default function Home() {
             <button onClick={() => setTagPickerOpen(!tagPickerOpen)} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
-            {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
+            {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><label className="tag-color-picker">Tag color<input type="color" value={newTagColor} onChange={(event) => setNewTagColor(event.target.value)} /></label><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => setNewTagColor(color)} />)}</div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
             <button>
               <Edit3 size={15} /> Edit Tags
             </button>
+            {visibleTags.map((tag) => (
+              <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={12} /> {tag}</span>
+            ))}
             <label className="font-picker">
               Font
               <select
@@ -497,9 +514,6 @@ export default function Home() {
                 <option value="geometric">Geometric</option>
               </select>
             </label>
-            {allTags.map((tag) => (
-              <span key={tag}>#{tag}</span>
-            ))}
           </div>
         </section>
         <div className="connection-strip">
@@ -643,7 +657,7 @@ export default function Home() {
                     <div className="note-card-top">
                       <div className="note-tags">
                         {note.tags?.map((tag) => (
-                          <span key={tag}>#{tag}</span>
+                          <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={11} /> {tag}</span>
                         ))}
                       </div>
                       <div className="note-times">
