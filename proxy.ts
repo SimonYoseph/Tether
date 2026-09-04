@@ -5,6 +5,8 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  if (request.nextUrl.pathname.startsWith("/api/")) return response;
+
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !supabaseKey) {
     return response;
   }
