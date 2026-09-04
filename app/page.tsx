@@ -45,6 +45,7 @@ type Point = { x: number; y: number };
 type NoteSize = { width: number; height: number };
 type Theme = "light" | "charcoal" | "black";
 type TagKeywords = Record<string, string[]>;
+type WorkspacePreferences = { theme: Theme; compact: boolean; structured: boolean; sortOldest: boolean };
 const tagColorPresets = ["#48aff5", "#ff927b", "#f5c85b", "#73d39a", "#b698ff"];
 const fontOptions = {
   courier: '"Courier New", Courier, monospace',
@@ -85,6 +86,9 @@ function notePositionsKey(userId?: string) {
 }
 function noteSizesKey(userId?: string) {
   return `tether-note-sizes-${userId ?? "guest"}`;
+}
+function workspacePreferencesKey(userId?: string) {
+  return `tether-workspace-preferences-${userId ?? "guest"}`;
 }
 function noteTitle(body: string, title: string) {
   return (
@@ -248,6 +252,7 @@ export default function Home() {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
       if (data.user) {
+        restoreWorkspacePreferences(data.user.id);
         const savedPositions = window.localStorage.getItem(notePositionsKey(data.user.id)) ?? window.localStorage.getItem("tether-note-positions");
         if (savedPositions) setPositions(JSON.parse(savedPositions));
         const savedSizes = window.localStorage.getItem(noteSizesKey(data.user.id));
@@ -265,6 +270,7 @@ export default function Home() {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
+        if (session?.user) restoreWorkspacePreferences(session.user.id);
         const savedPositions = window.localStorage.getItem(notePositionsKey(session?.user.id)) ?? window.localStorage.getItem("tether-note-positions");
         setPositions(savedPositions ? JSON.parse(savedPositions) : {});
         const savedSizes = window.localStorage.getItem(noteSizesKey(session?.user.id));
@@ -358,6 +364,19 @@ export default function Home() {
     setNoteSizes(next);
     window.localStorage.setItem(noteSizesKey(user?.id), JSON.stringify(next));
   }
+  function restoreWorkspacePreferences(userId: string) {
+    const saved = window.localStorage.getItem(workspacePreferencesKey(userId));
+    const preferences: WorkspacePreferences = saved ? JSON.parse(saved) : { theme: "black", compact: false, structured: false, sortOldest: false };
+    setTheme(preferences.theme);
+    setCompact(preferences.compact);
+    setStructured(preferences.structured);
+    setSortOldest(preferences.sortOldest);
+    document.documentElement.dataset.theme = preferences.theme;
+  }
+  function saveWorkspacePreferences(next: Partial<WorkspacePreferences>) {
+    const preferences: WorkspacePreferences = { theme, compact, structured, sortOldest, ...next };
+    window.localStorage.setItem(workspacePreferencesKey(user?.id), JSON.stringify(preferences));
+  }
   const visibleNotes = useMemo(() => {
     const filtered = notes.filter((note) =>
       `${note.title} ${note.description ?? ""} ${(note.tags ?? []).join(" ")}`
@@ -380,12 +399,26 @@ export default function Home() {
   function chooseTheme(nextTheme: Theme) {
     setTheme(nextTheme);
     document.documentElement.dataset.theme = nextTheme;
-    window.localStorage.setItem("tether-theme", nextTheme);
+    saveWorkspacePreferences({ theme: nextTheme });
   }
   function toggleStructured() {
     setStructured((current) => {
       const next = !current;
-      window.localStorage.setItem("tether-structured-view", String(next));
+      saveWorkspacePreferences({ structured: next });
+      return next;
+    });
+  }
+  function toggleCompact() {
+    setCompact((current) => {
+      const next = !current;
+      saveWorkspacePreferences({ compact: next });
+      return next;
+    });
+  }
+  function toggleSortOldest() {
+    setSortOldest((current) => {
+      const next = !current;
+      saveWorkspacePreferences({ sortOldest: next });
       return next;
     });
   }
@@ -915,9 +948,9 @@ export default function Home() {
               <div className={`profile-menu view-menu ${viewOpen ? "is-open" : ""}`} aria-hidden={!viewOpen}>
                 <div className="menu-title">View Options</div>
                 <div className="menu-divider" />
-                <label className="menu-toggle"><span>Compact view</span><input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} /><i /></label>
+                <label className="menu-toggle"><span>Compact view</span><input type="checkbox" checked={compact} onChange={toggleCompact} /><i /></label>
                 <label className="menu-toggle"><span>Structured view</span><input type="checkbox" checked={structured} onChange={toggleStructured} /><i /></label>
-                <button className="menu-row" onClick={() => setSortOldest(!sortOldest)}><span>Sort: {sortOldest ? "oldest first" : "newest first"}</span><Check size={15} className={sortOldest ? "visible" : "hidden"} /></button>
+                <button className="menu-row" onClick={toggleSortOldest}><span>Sort: {sortOldest ? "oldest first" : "newest first"}</span><Check size={15} className={sortOldest ? "visible" : "hidden"} /></button>
               </div>
             </div>
             </div>
