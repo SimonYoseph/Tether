@@ -444,7 +444,6 @@ export default function Home() {
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by text or date..."
               />
-              <kbd>/</kbd>
             </div>
             <button
               className="add-note-button"
@@ -494,7 +493,7 @@ export default function Home() {
           <span className="connected-state">Connected</span>
         </div>
         <section
-          className={`add-note-panel ${addOpen ? "is-open" : ""}`}
+          className={`add-note-panel ${addOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
           aria-hidden={!addOpen}
         >
           <div className="add-note-heading">
