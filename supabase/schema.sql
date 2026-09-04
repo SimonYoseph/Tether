@@ -44,8 +44,16 @@ create table if not exists public.tether_pulls (
   unique (tether_id, pulled_by)
 );
 
+create table if not exists public.tether_sms_settings (
+  user_id uuid references auth.users(id) on delete cascade primary key,
+  phone_number text unique not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 alter table public.tethers enable row level security;
 alter table public.tether_pulls enable row level security;
+alter table public.tether_sms_settings enable row level security;
 
 do $$
 begin
@@ -63,6 +71,12 @@ begin
   end if;
   if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_pulls' and policyname = 'Pull counts are viewable') then
     create policy "Pull counts are viewable" on public.tether_pulls for select using (true);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_sms_settings' and policyname = 'Users can view their SMS settings') then
+    create policy "Users can view their SMS settings" on public.tether_sms_settings for select using ((select auth.uid()) = user_id);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_sms_settings' and policyname = 'Users can manage their SMS settings') then
+    create policy "Users can manage their SMS settings" on public.tether_sms_settings for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
   end if;
 end;
 $$;

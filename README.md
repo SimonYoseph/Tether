@@ -28,12 +28,13 @@ The app uses `lib/supabase.ts` for browser access, `lib/supabase-server.ts` for 
 
 TextBee can forward SMS received by an Android phone to Tether. Install and configure TextBee on an Android phone with the number you want to text, then deploy Tether to a public HTTPS address.
 
-1. In Supabase Authentication > Users, copy the target Tether user's UUID into `TETHER_SMS_OWNER_ID`.
+1. Run the updated `supabase/schema.sql` in the Supabase SQL Editor to add the SMS settings table.
 2. Add the Supabase **service role** key as `SUPABASE_SERVICE_ROLE_KEY`. Keep this server-only value out of `NEXT_PUBLIC_*` variables and never commit it.
-3. Set a long random `TETHER_SMS_WEBHOOK_SECRET` and set `TETHER_SMS_ALLOWED_SENDER` to the phone number allowed to create notes.
-4. In TextBee, configure its inbound-message webhook URL as `https://your-domain.com/api/sms?secret=YOUR_SECRET`.
+3. Set a long random `TETHER_SMS_WEBHOOK_SECRET`.
+4. In Tether, open Profile > Text to Tether and register the phone number you will send notes from.
+5. In TextBee, configure its inbound-message webhook URL as `https://your-domain.com/api/sms?secret=YOUR_SECRET`.
 
-Tether accepts JSON or form-encoded webhook payloads with common body fields (`body`, `message`, `text`, or `content`) and sender fields (`from`, `sender`, or `phone`). Every incoming SMS becomes a private note tagged `source:sms`. SMS text can include `#tag` or `##tag` to create main or sub tags.
+Tether accepts JSON or form-encoded webhook payloads with common body fields (`body`, `message`, `text`, or `content`) and sender fields (`from`, `sender`, or `phone`). Every incoming SMS becomes a private note for the Tether account that registered its sending number, tagged `source:sms`. SMS text can include `#tag` or `##tag` to create main or sub tags.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

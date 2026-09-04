@@ -27,10 +27,9 @@ function tagsFromSms(text: string) {
 export async function POST(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const ownerId = process.env.TETHER_SMS_OWNER_ID;
   const secret = process.env.TETHER_SMS_WEBHOOK_SECRET;
 
-  if (!supabaseUrl || !serviceRoleKey || !ownerId || !secret) {
+  if (!supabaseUrl || !serviceRoleKey || !secret) {
     return NextResponse.json({ error: "SMS integration is not configured." }, { status: 503 });
   }
 
@@ -49,15 +48,18 @@ export async function POST(request: NextRequest) {
 
   const body = findText(payload, ["body", "message", "text", "content"]);
   const sender = findText(payload, ["from", "sender", "phone", "phoneNumber", "originator"]);
-  const allowedSender = process.env.TETHER_SMS_ALLOWED_SENDER;
   if (!body) return NextResponse.json({ error: "SMS body is required." }, { status: 400 });
-  if (allowedSender && (!sender || normalizePhone(sender) !== normalizePhone(allowedSender))) {
-    return NextResponse.json({ error: "Sender is not allowed." }, { status: 403 });
-  }
+  if (!sender) return NextResponse.json({ error: "SMS sender is required." }, { status: 400 });
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+  const { data: settings, error: settingsError } = await supabase
+    .from("tether_sms_settings")
+    .select("user_id")
+    .eq("phone_number", normalizePhone(sender))
+    .maybeSingle();
+  if (settingsError || !settings) return NextResponse.json({ error: "Sender is not configured." }, { status: 403 });
   const { error } = await supabase.from("tethers").insert({
-    user_id: ownerId,
+    user_id: settings.user_id,
     title: body.split("\n")[0].slice(0, 80) || "SMS note",
     description: body,
     tags: ["source:sms", ...tagsFromSms(body)],

@@ -26,6 +26,7 @@ import {
   Plus,
   Search,
   Settings2,
+  Smartphone,
   Tag,
   Trash2,
   X,
@@ -195,6 +196,10 @@ export default function Home() {
   const [theme, setTheme] = useState<Theme>("black");
   const [addOpen, setAddOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [smsSetupOpen, setSmsSetupOpen] = useState(false);
+  const [smsPhone, setSmsPhone] = useState("");
+  const [smsSaving, setSmsSaving] = useState(false);
+  const [smsMessage, setSmsMessage] = useState("");
   const [viewOpen, setViewOpen] = useState(false);
   const [compact, setCompact] = useState(false);
   const [structured, setStructured] = useState(false);
@@ -234,6 +239,14 @@ export default function Home() {
       }
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
+      if (data.user) {
+        const { data: settings } = await supabase
+          .from("tether_sms_settings")
+          .select("phone_number")
+          .eq("user_id", data.user.id)
+          .maybeSingle();
+        if (settings?.phone_number) setSmsPhone(settings.phone_number);
+      }
       await loadNotes(data.user?.id);
       setLoading(false);
     }
@@ -302,6 +315,17 @@ export default function Home() {
     setNotes([]);
     setProfileOpen(false);
     router.replace("/login");
+  }
+  async function saveSmsSettings(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user) return;
+    const phoneNumber = smsPhone.replace(/\D/g, "");
+    if (phoneNumber.length < 8) return setSmsMessage("Enter your full phone number, including country code.");
+    setSmsSaving(true);
+    setSmsMessage("");
+    const { error } = await supabase.from("tether_sms_settings").upsert({ user_id: user.id, phone_number: phoneNumber, updated_at: new Date().toISOString() });
+    setSmsMessage(error ? error.message : "Your phone is ready to send notes to Tether.");
+    setSmsSaving(false);
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -630,12 +654,16 @@ export default function Home() {
                   <button className={theme === "black" ? "selected" : ""} onClick={() => chooseTheme("black")}>Black</button>
                 </div>
               </div>
+              <button className="menu-sms" onClick={() => { setProfileOpen(false); setSmsSetupOpen(true); }}>
+                <Smartphone size={15} /> Text to Tether
+              </button>
               <button className="menu-signout" onClick={() => void signOut()}>
                 <LogOut size={15} /> Sign out
               </button>
             </div>
           </div>
         </header>
+        {smsSetupOpen && <div className="confirm-backdrop" role="presentation" onMouseDown={() => setSmsSetupOpen(false)}><section className="sms-setup-panel" role="dialog" aria-modal="true" aria-labelledby="sms-setup-title" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="close-button" onClick={() => setSmsSetupOpen(false)} aria-label="Close SMS setup"><X size={18} /></button><span className="sms-setup-icon"><Smartphone size={22} /></span><h2 id="sms-setup-title">Text to Tether</h2><p>Register the phone number you will text from. Incoming messages from this number will become private notes in your workspace.</p><form onSubmit={saveSmsSettings}><label>Your phone number<input required value={smsPhone} onChange={(event) => setSmsPhone(event.target.value)} placeholder="+1 555 123 4567" autoComplete="tel" /></label><button className="primary-button" disabled={smsSaving}>{smsSaving ? "Saving..." : "Save phone number"}</button></form><div className="sms-webhook"><strong>TextBee webhook</strong><code>/api/sms?secret=YOUR_SECRET</code><small>Add this path to your public Tether URL in TextBee. The secret is set once in your deployment environment.</small></div>{smsMessage && <p className="sms-message" role="status">{smsMessage}</p>}</section></div>}
         <section className="search-header">
           <div className="subheader-line">
             <span>Your Thought Space</span>
