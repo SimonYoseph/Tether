@@ -171,6 +171,22 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: none; box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
 .note-card.has-tag-color:not(.is-trash-hover) { border-color: var(--note-card-tag-color) !important; }
+.note-edit-form { position: static; }
+.note-resize-handles { position: absolute; inset: -19px; pointer-events: none; }
+.resize-handle { position: absolute; display: block; border: 0; padding: 0; pointer-events: auto; }
+.resize-n, .resize-s { right: 10px; left: 10px; height: 8px; cursor: ns-resize; }
+.resize-n { top: -4px; }
+.resize-s { bottom: -4px; }
+.resize-e, .resize-w { top: 10px; bottom: 10px; width: 8px; cursor: ew-resize; }
+.resize-e { right: -4px; }
+.resize-w { left: -4px; }
+.resize-ne, .resize-se, .resize-sw, .resize-nw { width: 14px; height: 14px; border: 1px solid #6acbff; border-radius: 2px; background: #111b25; }
+.resize-ne, .resize-sw { cursor: nesw-resize; }
+.resize-nw, .resize-se { cursor: nwse-resize; }
+.resize-ne { top: -7px; right: -7px; }
+.resize-se { right: -7px; bottom: -7px; }
+.resize-sw { bottom: -7px; left: -7px; }
+.resize-nw { top: -7px; left: -7px; }
 .note-card-top, .note-tags { display: flex; align-items: center; }
 .note-card-top { justify-content: space-between; gap: 14px; flex-direction: row; align-items: flex-start; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }

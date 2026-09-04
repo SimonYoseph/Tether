@@ -42,6 +42,7 @@ type Note = {
   updated_at?: string | null;
 };
 type Point = { x: number; y: number };
+type NoteSize = { width: number; height: number };
 type Theme = "light" | "charcoal" | "black";
 type TagKeywords = Record<string, string[]>;
 const tagColorPresets = ["#48aff5", "#ff927b", "#f5c85b", "#73d39a", "#b698ff"];
@@ -81,6 +82,9 @@ function initialNotePoint(index: number, total: number): Point {
 }
 function notePositionsKey(userId?: string) {
   return `tether-note-positions-${userId ?? "guest"}`;
+}
+function noteSizesKey(userId?: string) {
+  return `tether-note-sizes-${userId ?? "guest"}`;
 }
 function noteTitle(body: string, title: string) {
   return (
@@ -195,6 +199,7 @@ export default function Home() {
   const [tagKeywords, setTagKeywords] = useState<TagKeywords>({});
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
+  const [noteSizes, setNoteSizes] = useState<Record<string, NoteSize>>({});
   const [dragging, setDragging] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>("black");
   const [addOpen, setAddOpen] = useState(false);
@@ -210,6 +215,7 @@ export default function Home() {
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number; point: Point } | null>(null);
   const dragStartPoint = useRef<Point | null>(null);
+  const resizeRef = useRef<{ id: string; edge: string; startX: number; startY: number; startWidth: number; startHeight: number; startPoint: Point; element: HTMLElement } | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
   const trashHoverRef = useRef(false);
   const [trashHover, setTrashHover] = useState(false);
@@ -244,6 +250,8 @@ export default function Home() {
       if (data.user) {
         const savedPositions = window.localStorage.getItem(notePositionsKey(data.user.id)) ?? window.localStorage.getItem("tether-note-positions");
         if (savedPositions) setPositions(JSON.parse(savedPositions));
+        const savedSizes = window.localStorage.getItem(noteSizesKey(data.user.id));
+        if (savedSizes) setNoteSizes(JSON.parse(savedSizes));
         const { data: tagSettings } = await supabase
           .from("tether_tag_settings")
           .select("tag, color")
@@ -259,6 +267,8 @@ export default function Home() {
         setUser(session?.user ?? null);
         const savedPositions = window.localStorage.getItem(notePositionsKey(session?.user.id)) ?? window.localStorage.getItem("tether-note-positions");
         setPositions(savedPositions ? JSON.parse(savedPositions) : {});
+        const savedSizes = window.localStorage.getItem(noteSizesKey(session?.user.id));
+        setNoteSizes(savedSizes ? JSON.parse(savedSizes) : {});
         if (isSupabaseConfigured) void loadNotes(session?.user.id);
       },
     );
@@ -329,6 +339,10 @@ export default function Home() {
   function setAndPersistPositions(next: Record<string, Point>) {
     setPositions(next);
     window.localStorage.setItem(notePositionsKey(user?.id), JSON.stringify(next));
+  }
+  function setAndPersistSizes(next: Record<string, NoteSize>) {
+    setNoteSizes(next);
+    window.localStorage.setItem(noteSizesKey(user?.id), JSON.stringify(next));
   }
   const visibleNotes = useMemo(() => {
     const filtered = notes.filter((note) =>
@@ -509,6 +523,40 @@ export default function Home() {
     dragRef.current = { id, offsetX: event.clientX - noteBounds.left, offsetY: event.clientY - noteBounds.top, point: dragStartPoint.current };
     setDragging(id);
     event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function startResize(event: PointerEvent<HTMLElement>, id: string, edge: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    const element = event.currentTarget.closest<HTMLElement>("[data-note-id]");
+    const canvas = element?.parentElement;
+    if (!element || !canvas) return;
+    const bounds = element.getBoundingClientRect();
+    const canvasBounds = canvas.getBoundingClientRect();
+    resizeRef.current = { id, edge, startX: event.clientX, startY: event.clientY, startWidth: bounds.width, startHeight: bounds.height, startPoint: positions[id] ?? { x: ((bounds.left - canvasBounds.left) / canvasBounds.width) * 100, y: ((bounds.top - canvasBounds.top) / canvasBounds.height) * 100 }, element };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function resizeNote(event: PointerEvent<HTMLElement>) {
+    const resize = resizeRef.current;
+    if (!resize) return;
+    const canvas = resize.element.parentElement;
+    if (!canvas) return;
+    const dx = event.clientX - resize.startX;
+    const dy = event.clientY - resize.startY;
+    const width = Math.max(180, Math.min(560, resize.startWidth + (resize.edge.includes("e") ? dx : resize.edge.includes("w") ? -dx : 0)));
+    const height = Math.max(100, Math.min(720, resize.startHeight + (resize.edge.includes("s") ? dy : resize.edge.includes("n") ? -dy : 0)));
+    const point = { x: resize.startPoint.x + (resize.edge.includes("w") ? ((resize.startWidth - width) / canvas.getBoundingClientRect().width) * 100 : 0), y: resize.startPoint.y + (resize.edge.includes("n") ? ((resize.startHeight - height) / canvas.getBoundingClientRect().height) * 100 : 0) };
+    resize.element.style.width = `${width}px`;
+    resize.element.style.height = `${height}px`;
+    resize.element.style.left = `${point.x}%`;
+    resize.element.style.top = `${point.y}%`;
+    resizeRef.current = { ...resize, startPoint: point, startWidth: width, startHeight: height, startX: event.clientX, startY: event.clientY };
+  }
+  function stopResize() {
+    const resize = resizeRef.current;
+    if (!resize) return;
+    setAndPersistSizes({ ...noteSizes, [resize.id]: { width: resize.startWidth, height: resize.startHeight } });
+    setAndPersistPositions({ ...positions, [resize.id]: resize.startPoint });
+    resizeRef.current = null;
   }
   function insertList(marker: "- " | "1. ") {
     const textarea = noteBodyRef.current;
@@ -867,13 +915,14 @@ export default function Home() {
             ) : (
               visibleNotes.map((note, index) => {
                 const point = positions[note.id] ?? initialNotePoint(index, visibleNotes.length);
+                const size = noteSizes[note.id];
                 const noteTagColor = note.outline_color ?? note.tags?.map((tag) => tagColors[tag]).find(Boolean);
                 return (
                   <article
                     className={`note-card ${noteTagColor ? "has-tag-color" : ""} ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
                     key={note.id}
                     data-note-id={note.id}
-                    style={{ left: `${point.x}%`, top: `${point.y}%`, "--note-card-tag-color": noteTagColor } as CSSProperties}
+                    style={{ left: `${point.x}%`, top: `${point.y}%`, width: size?.width, height: size?.height, "--note-card-tag-color": noteTagColor } as CSSProperties}
                     onPointerDown={(event) => startDragging(event, note.id)}
                     onPointerMove={(event) => {
                       moveNote(event, note.id);
@@ -895,7 +944,7 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title (optional)" /><textarea autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Tags" /><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={requestEditExit}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
+                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title (optional)" /><textarea autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Tags" /><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={requestEditExit}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div><div className="note-resize-handles" aria-label="Resize note">{["n", "e", "s", "w", "ne", "se", "sw", "nw"].map((edge) => <button type="button" key={edge} aria-label={`Resize note ${edge}`} className={`resize-handle resize-${edge}`} onPointerDown={(event) => startResize(event, note.id, edge)} onPointerMove={resizeNote} onPointerUp={stopResize} />)}</div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
                   </article>
                 );
               })
