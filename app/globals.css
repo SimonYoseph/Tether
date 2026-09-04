@@ -107,6 +107,10 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .capture-note span { width: 6px; height: 6px; border-radius: 50%; background: #70b67a; }
 .message { border-left: 2px solid var(--accent); margin: 15px 0 0; padding-left: 9px; color: var(--muted); font: 12px/1.4 Arial, sans-serif; }
 .notes-heading { justify-content: space-between; }
+.view-options-wrap { position: relative; margin-left: auto; }
+.view-options-button { display: flex; align-items: center; gap: 6px; border: 1px solid #294761; border-radius: 7px; background: transparent; color: #8fa6b5; padding: 8px 10px; font: 700 10px var(--ui-font); text-transform: uppercase; }
+.view-options-button:hover { border-color: #48aff5; color: #48aff5; }
+.view-menu { top: 48px; right: 0; }
 .note-count { color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .canvas-intro { justify-content: space-between; margin: 15px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .notes-canvas { position: relative; min-height: 540px; overflow: visible; }

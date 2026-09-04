@@ -21,6 +21,7 @@ import {
   LogOut,
   Plus,
   Search,
+  Settings2,
   Tag,
   Trash2,
   X,
@@ -157,6 +158,7 @@ export default function Home() {
   const [theme, setTheme] = useState<Theme>("black");
   const [addOpen, setAddOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const [compact, setCompact] = useState(false);
   const [structured, setStructured] = useState(false);
   const [sortOldest, setSortOldest] = useState(false);
@@ -199,6 +201,7 @@ export default function Home() {
     );
     return () => listener.subscription.unsubscribe();
   }, []);
+  useEffect(() => { function closeView(event: MouseEvent) { const target = event.target; if (!(target instanceof Element) || !target.closest(".view-options-wrap")) setViewOpen(false); } document.addEventListener("mousedown", closeView); return () => document.removeEventListener("mousedown", closeView); }, []);
   async function loadNotes(userId?: string) {
     if (!userId) return;
     const { data, error } = await supabase
@@ -391,55 +394,12 @@ export default function Home() {
                   </small>
                 </div>
               </div>
-              <div className="menu-title">View Options</div>
-              <div className="menu-divider" />
-              <label className="menu-toggle">
-                <span>Compact view</span>
-                <input
-                  type="checkbox"
-                  checked={compact}
-                  onChange={(event) => setCompact(event.target.checked)}
-                />
-                <i />
-              </label>
-              <label className="menu-toggle">
-                <span>Structured view</span>
-                <input type="checkbox" checked={structured} onChange={toggleStructured} />
-                <i />
-              </label>
-              <button
-                className="menu-row"
-                onClick={() => setSortOldest(!sortOldest)}
-              >
-                <span>
-                  Sort: {sortOldest ? "oldest first" : "newest first"}
-                </span>
-                <Check
-                  size={15}
-                  className={sortOldest ? "visible" : "hidden"}
-                />
-              </button>
               <div className="theme-options">
                 <span>Theme</span>
                 <div>
-                  <button
-                    className={theme === "light" ? "selected" : ""}
-                    onClick={() => chooseTheme("light")}
-                  >
-                    Light
-                  </button>
-                  <button
-                    className={theme === "charcoal" ? "selected" : ""}
-                    onClick={() => chooseTheme("charcoal")}
-                  >
-                    Charcoal
-                  </button>
-                  <button
-                    className={theme === "black" ? "selected" : ""}
-                    onClick={() => chooseTheme("black")}
-                  >
-                    Black
-                  </button>
+                  <button className={theme === "light" ? "selected" : ""} onClick={() => chooseTheme("light")}>Light</button>
+                  <button className={theme === "charcoal" ? "selected" : ""} onClick={() => chooseTheme("charcoal")}>Charcoal</button>
+                  <button className={theme === "black" ? "selected" : ""} onClick={() => chooseTheme("black")}>Black</button>
                 </div>
               </div>
               <button
@@ -600,11 +560,20 @@ export default function Home() {
               <span>01</span>
               <h2>Notes</h2>
             </div>
-            <span className="note-count">{visibleNotes.length} saved</span>
+            <div className="view-options-wrap">
+              <button className="view-options-button" onClick={() => setViewOpen(!viewOpen)} aria-label="Open view options" aria-expanded={viewOpen} title="View options"><Settings2 size={16} /> View</button>
+              <div className={`profile-menu view-menu ${viewOpen ? "is-open" : ""}`} aria-hidden={!viewOpen}>
+                <div className="menu-title">View Options</div>
+                <div className="menu-divider" />
+                <label className="menu-toggle"><span>Compact view</span><input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} /><i /></label>
+                <label className="menu-toggle"><span>Structured view</span><input type="checkbox" checked={structured} onChange={toggleStructured} /><i /></label>
+                <button className="menu-row" onClick={() => setSortOldest(!sortOldest)}><span>Sort: {sortOldest ? "oldest first" : "newest first"}</span><Check size={15} className={sortOldest ? "visible" : "hidden"} /></button>
+              </div>
+            </div>
             <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
           </div>
           <div className="canvas-intro">
-            <span>Drag notes anywhere</span>
+            <span>Drag notes anywhere <b className="note-count">{visibleNotes.length} saved</b></span>
             <span>{sortOldest ? "Oldest first" : "Newest first"}</span>
           </div>
           <div className="notes-canvas">
