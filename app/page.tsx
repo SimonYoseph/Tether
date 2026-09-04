@@ -573,7 +573,7 @@ export default function Home() {
             <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
           </div>
           <div className="canvas-intro">
-            <span>Drag notes anywhere <b className="note-count">{visibleNotes.length} saved</b></span>
+            <span>Drag notes anywhere <i className="hint-divider" /> <b className="note-count">{visibleNotes.length} saved</b></span>
             <span>{sortOldest ? "Oldest first" : "Newest first"}</span>
           </div>
           <div className="notes-canvas">

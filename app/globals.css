@@ -222,6 +222,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes dialog-in { from { opacity: 0; transform: translateY(-10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .canvas-intro { margin-top: 9px; }
+.hint-divider { display: inline-block; width: 1px; height: 11px; margin: 0 8px; vertical-align: -1px; background: currentColor; opacity: .45; }
 .notes-canvas { min-height: 620px; border: 0; background: #06090d; }
 :root[data-theme="black"] .profile-button { border-color: #31506b; background: #172a3d; color: #d6edfc; }
 :root[data-theme="black"] .profile-menu { border-color: #294761; background: #111b25; color: #dfeaf0; }
