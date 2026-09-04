@@ -959,7 +959,7 @@ export default function Home() {
             <span>Drag notes anywhere <i className="hint-divider" /> <b className="note-count">{visibleNotes.length} saved</b></span>
             <span>{sortOldest ? "Oldest first" : "Newest first"}</span>
           </div>
-          <div className="notes-canvas" style={{ minHeight: `${Math.max(540, visibleNotes.length * 560)}px` }}>
+          <div className="notes-canvas" style={{ minHeight: structured ? "540px" : "620px" }}>
             {loading ? (
               <div className="empty">
                 <LoaderCircle className="spin" size={20} /> Loading...
