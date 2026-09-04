@@ -48,9 +48,8 @@ button { cursor: pointer; }
 .theme-options button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #c3d5e0; padding: 6px 8px; font: 800 11px var(--ui-font); }
 .theme-options button.selected { border-color: #48aff5; background: #1c5279; color: #fff; }
 .menu-signout { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #ff927b; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-.menu-sms { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: #d6edfc; padding: 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .menu-signin { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #48aff5; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-.menu-row:hover, .menu-signout:hover, .menu-signin:hover, .menu-sms:hover { color: #48aff5; }
+.menu-row:hover, .menu-signout:hover, .menu-signin:hover { color: #48aff5; }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
 .icon-button:hover, .header-link:hover { color: var(--accent); }
 .header-link { gap: 6px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
@@ -356,17 +355,3 @@ footer { margin-top: 30px; color: #5f7483; }
 .login-signup:hover { border-color: #48aff5; color: #48aff5; }
 .login-submit:disabled, .login-signup:disabled { cursor: not-allowed; opacity: .55; }
 .login-message { margin: 0; color: #ff927b; font: 11px/1.4 "Courier New", Courier, monospace; }
-.sms-setup-panel { position: relative; width: min(100% - 32px, 440px); border: 1px solid #31506b; border-radius: 8px; background: #111b25; box-shadow: 0 20px 55px rgba(0, 0, 0, .45); padding: 26px; color: #edf3f7; }
-.sms-setup-panel .close-button { position: absolute; top: 14px; right: 14px; }
-.sms-setup-icon { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #48aff5; }
-.sms-setup-panel h2 { margin: 17px 0 7px; font-size: 24px; }
-.sms-setup-panel > p { margin: 0 0 20px; color: #b9ccd8; font: 12px/1.5 var(--ui-font); }
-.sms-setup-panel form { display: grid; gap: 12px; }
-.sms-setup-panel label { display: grid; gap: 6px; color: #c3d5e0; font: 800 10px Arial, sans-serif; letter-spacing: .07em; text-transform: uppercase; }
-.sms-setup-panel input { border: 1px solid #31506b; border-radius: 6px; background: #172a3d; color: #edf3f7; outline: 0; padding: 11px 12px; font: 14px var(--ui-font); }
-.sms-setup-panel input:focus { border-color: #48aff5; }
-.sms-webhook { display: grid; gap: 7px; border: 1px solid #294761; border-radius: 6px; margin-top: 18px; padding: 12px; }
-.sms-webhook strong { color: #c3d5e0; font: 800 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-.sms-webhook code { overflow-x: auto; color: #6acbff; font: 12px "Courier New", Courier, monospace; white-space: nowrap; }
-.sms-webhook small { color: #9eb4c4; font: 10px/1.4 var(--ui-font); }
-.sms-message { margin: 14px 0 0; color: #6acb94; font: 11px/1.4 var(--ui-font); }
