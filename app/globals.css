@@ -17,7 +17,7 @@ button { cursor: pointer; }
 .site-header { justify-content: space-between; padding-bottom: 20px; }
 .brand { display: flex; align-items: center; gap: 13px; color: var(--ink); text-decoration: none; }
 .brand-logo { width: 60px; height: 60px; border: 2px solid var(--ink); border-radius: 50%; object-fit: cover; box-shadow: 3px 3px 0 var(--accent); }
-.brand-wordmark { display: flex; flex-direction: column; color: #d9e9f2; font: 900 32px/0.9 "Rockwell Extra Bold", Rockwell, Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; letter-spacing: .08em; -webkit-text-stroke: .7px #071019; text-shadow: 1px 1px 0 #071019, 3px 3px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .12), 0 5px 10px rgba(0, 0, 0, .32); }
+.brand-wordmark { display: flex; flex-direction: column; color: #d9e9f2; font: 800 30px/0.9 "Avenir Next Condensed", "Helvetica Neue Condensed Bold", "Arial Narrow", sans-serif; letter-spacing: .12em; -webkit-text-stroke: .45px #071019; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .1), 0 4px 8px rgba(0, 0, 0, .28); }
 .header-actions { gap: 18px; }
 .icon-button, .header-link, .note-close { border: 0; background: transparent; color: var(--muted); }
 .profile-button { position: relative; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #d6edfc; }
@@ -29,11 +29,11 @@ button { cursor: pointer; }
 .profile-heading { display: flex; align-items: center; gap: 10px; }
 .profile-heading > svg { color: #48aff5; }
 .profile-heading div { display: grid; gap: 3px; }
-.profile-heading strong { font: 600 12px var(--ui-font); }
-.profile-heading small { color: #8fa6b5; font: 10px var(--ui-font); }
-.menu-title { color: #8fa6b5; font: 700 10px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+.profile-heading strong { font: 800 13px var(--ui-font); }
+.profile-heading small { color: #c3d5e0; font: 700 11px var(--ui-font); }
+.menu-title { color: #c3d5e0; font: 800 11px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
 .menu-divider { height: 1px; background: #294761; margin-top: -5px; }
-.menu-toggle, .menu-row, .theme-options { display: flex; align-items: center; justify-content: space-between; color: #dfeaf0; font: 11px var(--ui-font); }
+.menu-toggle, .menu-row, .theme-options { display: flex; align-items: center; justify-content: space-between; color: #f1f6fa; font: 800 12px var(--ui-font); }
 .menu-toggle input { position: absolute; opacity: 0; }
 .menu-toggle i { width: 30px; height: 17px; border-radius: 20px; background: #38556f; padding: 2px; }
 .menu-toggle i::after { display: block; width: 13px; height: 13px; border-radius: 50%; background: #c9d8e2; content: ""; transition: transform .2s ease; }
@@ -45,10 +45,10 @@ button { cursor: pointer; }
 .menu-row .visible { color: #6acb94; }
 .theme-options { display: grid; gap: 8px; }
 .theme-options > div { display: flex; gap: 5px; }
-.theme-options button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #9eb4c4; padding: 5px 7px; font: 10px var(--ui-font); }
+.theme-options button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #c3d5e0; padding: 6px 8px; font: 800 11px var(--ui-font); }
 .theme-options button.selected { border-color: #48aff5; background: #1c5279; color: #fff; }
-.menu-signout { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #ff927b; padding: 13px 0 0; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-.menu-signin { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #48aff5; padding: 13px 0 0; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.menu-signout { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #ff927b; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.menu-signin { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #48aff5; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .menu-row:hover, .menu-signout:hover, .menu-signin:hover { color: #48aff5; }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
 .icon-button:hover, .header-link:hover { color: var(--accent); }
@@ -290,10 +290,10 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 :root[data-theme="light"] .profile-button { border-color: #b9c6d0; background: #ffffff; color: #283746; }
 :root[data-theme="light"] .profile-menu { border-color: #cbd4dc; background: #ffffff; color: #283746; box-shadow: 0 18px 45px rgba(40, 55, 70, .16); }
 :root[data-theme="light"] .profile-heading > svg, :root[data-theme="light"] .profile-button:hover { color: #1685d2; }
-:root[data-theme="light"] .profile-heading small, :root[data-theme="light"] .menu-title { color: #687989; }
+:root[data-theme="light"] .profile-heading small, :root[data-theme="light"] .menu-title { color: #425665; }
 :root[data-theme="light"] .menu-divider, :root[data-theme="light"] .menu-signout { border-color: #cbd4dc; }
-:root[data-theme="light"] .menu-toggle, :root[data-theme="light"] .menu-row, :root[data-theme="light"] .theme-options { color: #283746; }
-:root[data-theme="light"] .theme-options button { border-color: #b9c6d0; color: #687989; }
+:root[data-theme="light"] .menu-toggle, :root[data-theme="light"] .menu-row, :root[data-theme="light"] .theme-options { color: #172a3d; }
+:root[data-theme="light"] .theme-options button { border-color: #b9c6d0; color: #425665; }
 :root[data-theme="light"] .theme-options button.selected { border-color: #1685d2; background: #d9e9f4; color: #283746; }
 :root[data-theme="black"] .brand-wordmark, :root[data-theme="charcoal"] .brand-wordmark { color: #ffffff; }
 :root[data-theme="light"] .brand-wordmark { color: #283746; }
@@ -337,7 +337,7 @@ footer { margin-top: 30px; color: #5f7483; }
 :root[data-theme="light"] .connection-strip small { color: #526a79; }
 :root[data-theme="light"] .add-note-panel .capture-form > input, :root[data-theme="light"] .add-note-panel .capture-form textarea { color: #283746; }
 .tag-chip { font-weight: 800 !important; }
-.brand-wordmark { -webkit-text-stroke: .7px #071019; text-shadow: 1px 1px 0 #071019, 3px 3px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .12), 0 5px 10px rgba(0, 0, 0, .32); }
+.brand-wordmark { -webkit-text-stroke: .45px #071019; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .1), 0 4px 8px rgba(0, 0, 0, .28); }
 .login-page { display: grid; min-height: 100vh; place-items: center; background: #06090d; color: #edf3f7; padding: 24px; }
 .login-panel { width: min(100%, 390px); border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 12px 12px 0 rgba(0, 0, 0, .2); padding: 32px; }
 .login-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #48aff5; }
