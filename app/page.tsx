@@ -172,6 +172,10 @@ export default function Home() {
   const trashRef = useRef<HTMLButtonElement>(null);
   const [trashHover, setTrashHover] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const [editTags, setEditTags] = useState("");
   useEffect(() => {
     async function load() {
       const savedTheme = window.localStorage.getItem(
@@ -276,6 +280,18 @@ export default function Home() {
       setAddOpen(false);
       await loadNotes(user.id);
     }
+  }
+  function beginEdit(note: Note) {
+    setEditingId(note.id);
+    setEditTitle(note.title);
+    setEditBody(note.description ?? note.title);
+    setEditTags(note.tags?.join(", ") ?? "");
+  }
+  async function saveEdit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingId || !editBody.trim() || !user || !isSupabaseConfigured) return;
+    const { error } = await supabase.from("tethers").update({ title: noteTitle(editBody, editTitle), description: editBody.trim(), tags: editTags.split(",").map((tag) => tag.trim()).filter(Boolean) }).eq("id", editingId).eq("user_id", user.id);
+    if (error) setMessage(error.message); else { setEditingId(null); await loadNotes(user.id); }
   }
   function moveNote(event: PointerEvent<HTMLElement>, id: string) {
     if (dragRef.current?.id !== id) return;
@@ -560,8 +576,9 @@ export default function Home() {
               <span>01</span>
               <h2>Notes</h2>
             </div>
-            <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
-            <div className="view-options-wrap">
+            <div className="note-heading-actions">
+              <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
+              <div className="view-options-wrap">
               <button className="view-options-button" onClick={() => setViewOpen(!viewOpen)} aria-label="Open view options" aria-expanded={viewOpen} title="View options"><Settings2 size={17} /></button>
               <div className={`profile-menu view-menu ${viewOpen ? "is-open" : ""}`} aria-hidden={!viewOpen}>
                 <div className="menu-title">View Options</div>
@@ -570,6 +587,7 @@ export default function Home() {
                 <label className="menu-toggle"><span>Structured view</span><input type="checkbox" checked={structured} onChange={toggleStructured} /><i /></label>
                 <button className="menu-row" onClick={() => setSortOldest(!sortOldest)}><span>Sort: {sortOldest ? "oldest first" : "newest first"}</span><Check size={15} className={sortOldest ? "visible" : "hidden"} /></button>
               </div>
+            </div>
             </div>
           </div>
           <div className="canvas-intro">
@@ -601,6 +619,7 @@ export default function Home() {
                       moveNote(event, note.id);
                     }}
                     onPointerUp={(event) => void dropNote(event, note.id)}
+                    onDoubleClick={() => beginEdit(note)}
                   >
                     <div className="note-card-top">
                       <div className="note-tags">
@@ -616,8 +635,7 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    {note.description && note.description !== note.title && <h3>{note.title}</h3>}
-                    {renderNoteContent(note.description ?? note.title)}
+                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title (optional)" /><textarea autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Tags" /><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={() => setEditingId(null)}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
                   </article>
                 );
               })
