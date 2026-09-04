@@ -17,6 +17,26 @@ function noteTitle(body: string, title: string) { return title.trim() || body.tr
 function formatDateTime(value: string) { return new Date(value).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }
 
 export default function Home() {
+  useEffect(() => {
+    function continueList(event: KeyboardEvent) {
+      if (event.key !== "Enter" || !(event.target instanceof HTMLTextAreaElement) || !event.target.closest(".capture-form")) return;
+      const textarea = event.target;
+      const line = textarea.value.slice(0, textarea.selectionStart).split("\n").pop() ?? "";
+      const unordered = line.match(/^(\s*)([-*•])\s+.+$/);
+      const ordered = line.match(/^(\s*)(\d+)([.)])\s+.+$/);
+      if (!unordered && !ordered) return;
+      event.preventDefault();
+      const prefix = unordered ? `${unordered[1]}${unordered[2]} ` : `${ordered?.[1]}${Number(ordered?.[2]) + 1}${ordered?.[3]} `;
+      const start = textarea.selectionStart;
+      const nextValue = `${textarea.value.slice(0, start)}\n${prefix}${textarea.value.slice(textarea.selectionEnd)}`;
+      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+      setter?.call(textarea, nextValue);
+      textarea.dispatchEvent(new Event("input", { bubbles: true }));
+      requestAnimationFrame(() => textarea.setSelectionRange(start + prefix.length + 1, start + prefix.length + 1));
+    }
+    document.addEventListener("keydown", continueList);
+    return () => document.removeEventListener("keydown", continueList);
+  }, []);
   useEffect(() => { function closeProfile(event: MouseEvent) { const target = event.target; if (!(target instanceof Element) || !target.closest(".header-actions")) setProfileOpen(false); } document.addEventListener("mousedown", closeProfile); return () => document.removeEventListener("mousedown", closeProfile); }, []);
   const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [user, setUser] = useState<{ id: string } | null>(null); const [notes, setNotes] = useState<Note[]>([]); const [body, setBody] = useState(""); const [title, setTitle] = useState(""); const [tagsInput, setTagsInput] = useState(""); const [search, setSearch] = useState(""); const [positions, setPositions] = useState<Record<string, Point>>({}); const [dragging, setDragging] = useState<string | null>(null); const [theme, setTheme] = useState<Theme>("black"); const [addOpen, setAddOpen] = useState(false); const [profileOpen, setProfileOpen] = useState(false); const [compact, setCompact] = useState(false); const [sortOldest, setSortOldest] = useState(false); const [loading, setLoading] = useState(true); const [message, setMessage] = useState(""); const [fontChoice, setFontChoice] = useState<keyof typeof fontOptions>("courier");
   useEffect(() => { async function load() { const savedTheme = window.localStorage.getItem("tether-theme") as Theme | null; if (savedTheme) { setTheme(savedTheme); document.documentElement.dataset.theme = savedTheme; } if (!isSupabaseConfigured) { setNotes(demoNotes); setLoading(false); return; } const { data } = await supabase.auth.getUser(); setUser(data.user); await loadNotes(data.user?.id); setLoading(false); } void load(); const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUser(session?.user ?? null); if (isSupabaseConfigured) void loadNotes(session?.user.id); }); return () => listener.subscription.unsubscribe(); }, []);
