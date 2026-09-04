@@ -364,7 +364,10 @@ export default function Home() {
         .toLowerCase()
         .includes(search.toLowerCase()),
     );
-    return sortOldest ? [...filtered].reverse() : filtered;
+    return [...filtered].sort((first, second) => {
+      const difference = new Date(first.created_at).getTime() - new Date(second.created_at).getTime();
+      return sortOldest ? difference : -difference;
+    });
   }, [notes, search, sortOldest]);
   const allTags = useMemo(
     () => Array.from(new Set(notes.flatMap((note) => note.tags ?? []))),
