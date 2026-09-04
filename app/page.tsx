@@ -279,17 +279,20 @@ export default function Home() {
       ),
     };
     const trashBounds = trashRef.current?.getBoundingClientRect();
-    setTrashHover(Boolean(trashBounds && event.clientX >= trashBounds.left && event.clientX <= trashBounds.right && event.clientY >= trashBounds.top && event.clientY <= trashBounds.bottom));
+    const noteBounds = event.currentTarget.getBoundingClientRect();
+    const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
+    setTrashHover(overlapsTrash);
     const next = { ...positions, [id]: point };
     setPositions(next);
     window.localStorage.setItem("tether-note-positions", JSON.stringify(next));
   }
   async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
     const trashBounds = trashRef.current?.getBoundingClientRect();
+    const noteBounds = event.currentTarget.getBoundingClientRect();
     setDragging(null);
     dragRef.current = null;
     setTrashHover(false);
-    if (!trashBounds || event.clientX < trashBounds.left || event.clientX > trashBounds.right || event.clientY < trashBounds.top || event.clientY > trashBounds.bottom) return;
+    if (!trashBounds || noteBounds.right < trashBounds.left || noteBounds.left > trashBounds.right || noteBounds.bottom < trashBounds.top || noteBounds.top > trashBounds.bottom) return;
     if (isSupabaseConfigured && user) {
       const { error } = await supabase.from("tethers").delete().eq("id", id).eq("user_id", user.id);
       if (error) return setMessage(error.message);
