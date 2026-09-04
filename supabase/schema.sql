@@ -21,10 +21,20 @@ begin
 end;
 $$;
 
-drop trigger if exists set_tethers_updated_at on public.tethers;
-create trigger set_tethers_updated_at
-before update on public.tethers
-for each row execute function public.set_tether_updated_at();
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_trigger
+    where tgname = 'set_tethers_updated_at'
+      and tgrelid = 'public.tethers'::regclass
+  ) then
+    create trigger set_tethers_updated_at
+    before update on public.tethers
+    for each row execute function public.set_tether_updated_at();
+  end if;
+end;
+$$;
 
 create table public.tether_pulls (
   id uuid default gen_random_uuid() primary key,
