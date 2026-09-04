@@ -327,6 +327,20 @@ export default function Home() {
     }, 150);
     return () => window.clearTimeout(timer);
   }, [notes, positions, structured, user?.id]);
+  useEffect(() => {
+    if (!notes.length) return;
+    const timer = window.setTimeout(() => {
+      const nextSizes = { ...noteSizes };
+      let changed = false;
+      document.querySelectorAll<HTMLElement>("[data-note-id]").forEach((card) => {
+        if (card.scrollHeight <= card.clientHeight) return;
+        nextSizes[card.dataset.noteId!] = { width: card.getBoundingClientRect().width, height: card.scrollHeight + 2 };
+        changed = true;
+      });
+      if (changed) setAndPersistSizes(nextSizes);
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [noteSizes, notes, structured, user?.id]);
   async function loadNotes(userId?: string) {
     if (!userId) return;
     const { data, error } = await supabase
