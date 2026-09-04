@@ -66,6 +66,13 @@ button { cursor: pointer; }
 .tag-tools button { gap: 7px; border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 8px 12px; font: 700 10px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .tag-tools button:hover { border-color: var(--accent); color: var(--accent); }
 .tag-tools span { color: var(--muted); font: 10px Arial, sans-serif; }
+.tag-tools { position: relative; }
+.tag-picker-menu { position: absolute; z-index: 25; top: 38px; left: 0; display: grid; width: 240px; gap: 10px; border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); padding: 13px; color: #dfeaf0; }
+.tag-picker-menu strong { font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.tag-type-buttons, .tag-entry { display: flex; gap: 6px; }
+.tag-type-buttons button, .tag-entry button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #9eb4c4; padding: 7px 8px; font: 10px var(--ui-font); }
+.tag-type-buttons button.selected, .tag-type-buttons button:hover, .tag-entry button:hover { border-color: #48aff5; color: #fff; }
+.tag-entry input { min-width: 0; flex: 1; border: 1px solid #31506b; border-radius: 5px; background: #172a3d; color: #edf3f7; outline: 0; padding: 7px 8px; font: 11px var(--ui-font); }
 .font-picker { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); color: var(--muted); padding: 7px 10px; font: 700 10px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .font-picker select { border: 0; background: transparent; color: var(--ink); outline: 0; font: 11px var(--ui-font); text-transform: none; }
 .global-search input { width: 100%; border: 0; background: transparent; color: var(--ink); outline: 0; font-size: 15px; }

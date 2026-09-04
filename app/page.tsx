@@ -152,6 +152,9 @@ export default function Home() {
   const [body, setBody] = useState("");
   const [title, setTitle] = useState("");
   const [tagsInput, setTagsInput] = useState("");
+  const [tagPickerOpen, setTagPickerOpen] = useState(false);
+  const [tagType, setTagType] = useState<"main" | "sub">("main");
+  const [newTag, setNewTag] = useState("");
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
   const [dragging, setDragging] = useState<string | null>(null);
@@ -378,6 +381,14 @@ export default function Home() {
       textarea.setSelectionRange(start + insertion.length, start + insertion.length);
     });
   }
+  function addTag() {
+    if (!newTag.trim()) return;
+    const tag = `${tagType}:${newTag.trim().replace(/\s+/g, "-")}`;
+    setTagsInput((current) => (current ? `${current}, ${tag}` : tag));
+    setNewTag("");
+    setTagPickerOpen(false);
+    setAddOpen(true);
+  }
   return (
     <main
       className={`app-shell ${compact ? "compact-view" : ""} ${structured ? "structured-view" : ""}`}
@@ -463,9 +474,10 @@ export default function Home() {
             </button>
           </div>
           <div className="tag-tools">
-            <button>
+            <button onClick={() => setTagPickerOpen(!tagPickerOpen)} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
+            {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
             <button>
               <Edit3 size={15} /> Edit Tags
             </button>
