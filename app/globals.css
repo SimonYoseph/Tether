@@ -163,6 +163,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .header-profile { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: transparent; color: #9eb4c4; }
 .search-header { display: grid; gap: 17px; border: 0; padding: 5px 0 24px; }
 .subheader-line { margin-left: 73px; border: 0; padding: 0; color: #a6b8c4; font-size: 13px; letter-spacing: .04em; }
+.subheader-line { border-bottom: 1px solid #294761; padding-bottom: 12px; }
 .subheader-line b { color: #48aff5; }
 .search-tools { gap: 12px; }
 .global-search { width: 100%; border: 1px solid #213c55; border-radius: 8px; background: #111b25; padding: 13px 15px; }
@@ -261,6 +262,9 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 :root[data-theme="light"] .global-search, :root[data-theme="light"] .note-card { background: #fff; border-color: #cbd4dc; }
 :root[data-theme="light"] .section-label h2, :root[data-theme="light"] .note-card > p, :root[data-theme="light"] .brand-wordmark { color: #283746; }
 :root[data-theme="light"] .global-search input, :root[data-theme="light"] .capture-form input, :root[data-theme="light"] .capture-form textarea { color: #283746; }
+:root[data-theme="light"] .note-card > p, :root[data-theme="light"] .note-card > h3, :root[data-theme="light"] .note-card > ul, :root[data-theme="light"] .note-card > ol, :root[data-theme="light"] .note-card li { color: #283746; }
+:root[data-theme="black"] .note-card > p, :root[data-theme="black"] .note-card > h3, :root[data-theme="black"] .note-card > ul, :root[data-theme="black"] .note-card > ol, :root[data-theme="black"] .note-card li { color: #f1f6fa; }
+:root[data-theme="charcoal"] .note-card > p, :root[data-theme="charcoal"] .note-card > h3, :root[data-theme="charcoal"] .note-card > ul, :root[data-theme="charcoal"] .note-card > ol, :root[data-theme="charcoal"] .note-card li { color: #f0f3f5; }
 footer { margin-top: 30px; color: #5f7483; }
 @media (max-width: 760px) { .side-rail { width: 54px; min-width: 54px; } .rail-logo { width: 34px; height: 34px; } .rail-add { font-size: 9px; } .dashboard { width: calc(100% - 32px); padding: 18px 0 24px; } .brand-wordmark { font-size: 24px; } .connection-strip { align-items: flex-start; } .connection-strip .connected-state { display: none; } .subheader-line { font-size: 11px; } .notes-canvas { min-height: 620px; } .note-card { width: min(220px, 76%); } .structured-view .notes-canvas { grid-template-columns: 1fr; } .structured-view .note-card { width: min(220px, 76%); } }
 
