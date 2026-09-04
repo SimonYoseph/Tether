@@ -80,6 +80,9 @@ const demoNotes: Note[] = [
 function initialNotePoint(index: number, total: number): Point {
   return { x: 4, y: 4 + (index * 88) / Math.max(total, 1) };
 }
+function notePositionsKey(userId?: string) {
+  return `tether-note-positions-${userId ?? "guest"}`;
+}
 function noteTitle(body: string, title: string) {
   return (
     title.trim() || body.trim().split("\n")[0].slice(0, 80) || "Untitled note"
@@ -241,6 +244,8 @@ export default function Home() {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
       if (data.user) {
+        const savedPositions = window.localStorage.getItem(notePositionsKey(data.user.id)) ?? window.localStorage.getItem("tether-note-positions");
+        if (savedPositions) setPositions(JSON.parse(savedPositions));
         const { data: settings } = await supabase
           .from("tether_sms_settings")
           .select("phone_number")
@@ -260,6 +265,8 @@ export default function Home() {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
+        const savedPositions = window.localStorage.getItem(notePositionsKey(session?.user.id)) ?? window.localStorage.getItem("tether-note-positions");
+        setPositions(savedPositions ? JSON.parse(savedPositions) : {});
         if (isSupabaseConfigured) void loadNotes(session?.user.id);
       },
     );
@@ -285,6 +292,10 @@ export default function Home() {
       .eq("user_id", userId)
       .order("created_at", { ascending: sortOldest });
     if (!error) setNotes((data as Note[]) ?? []);
+  }
+  function setAndPersistPositions(next: Record<string, Point>) {
+    setPositions(next);
+    window.localStorage.setItem(notePositionsKey(user?.id), JSON.stringify(next));
   }
   const visibleNotes = useMemo(() => {
     const filtered = notes.filter((note) =>
@@ -416,8 +427,7 @@ export default function Home() {
     setTrashHover(overlapsTrash);
     if (overlapsNote) return;
     const next = { ...positions, [id]: point };
-    setPositions(next);
-    window.localStorage.setItem("tether-note-positions", JSON.stringify(next));
+    setAndPersistPositions(next);
   }
   async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
     const trashBounds = trashRef.current?.getBoundingClientRect();
@@ -429,7 +439,7 @@ export default function Home() {
     const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
     const releasedAboveCanvas = Boolean(canvasBounds && noteBounds.top < canvasBounds.top);
     if (!overlapsTrash && releasedAboveCanvas) {
-      if (dragStartPoint.current) setPositions((current) => ({ ...current, [id]: dragStartPoint.current as Point }));
+      if (dragStartPoint.current) setAndPersistPositions({ ...positions, [id]: dragStartPoint.current });
       dragStartPoint.current = null;
       return;
     }
@@ -452,7 +462,7 @@ export default function Home() {
     dragStartPoint.current = null;
   }
   function cancelDelete() {
-    if (confirmDeleteId && dragStartPoint.current) setPositions((current) => ({ ...current, [confirmDeleteId]: dragStartPoint.current as Point }));
+    if (confirmDeleteId && dragStartPoint.current) setAndPersistPositions({ ...positions, [confirmDeleteId]: dragStartPoint.current });
     setConfirmDeleteId(null);
     dragStartPoint.current = null;
   }
