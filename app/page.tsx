@@ -354,9 +354,21 @@ export default function Home() {
         Math.min(82, ((event.clientY - bounds.top - dragRef.current.offsetY) / bounds.height) * 100),
       ),
     };
+    const projectedBounds = {
+      left: bounds.left + (point.x / 100) * bounds.width,
+      top: bounds.top + (point.y / 100) * bounds.height,
+      right: bounds.left + (point.x / 100) * bounds.width + noteBounds.width,
+      bottom: bounds.top + (point.y / 100) * bounds.height + noteBounds.height,
+    };
+    const overlapsNote = Array.from(canvas.querySelectorAll<HTMLElement>("[data-note-id]")).some((note) => {
+      if (note.dataset.noteId === id) return false;
+      const otherBounds = note.getBoundingClientRect();
+      return projectedBounds.right > otherBounds.left && projectedBounds.left < otherBounds.right && projectedBounds.bottom > otherBounds.top && projectedBounds.top < otherBounds.bottom;
+    });
     const trashBounds = trashRef.current?.getBoundingClientRect();
-    const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
+    const overlapsTrash = Boolean(trashBounds && projectedBounds.right >= trashBounds.left && projectedBounds.left <= trashBounds.right && projectedBounds.bottom >= trashBounds.top && projectedBounds.top <= trashBounds.bottom);
     setTrashHover(overlapsTrash);
+    if (overlapsNote) return;
     const next = { ...positions, [id]: point };
     setPositions(next);
     window.localStorage.setItem("tether-note-positions", JSON.stringify(next));
@@ -790,6 +802,7 @@ export default function Home() {
                   <article
                     className={`note-card ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
                     key={note.id}
+                    data-note-id={note.id}
                     style={{ left: `${point.x}%`, top: `${point.y}%` }}
                     onPointerDown={(event) => startDragging(event, note.id)}
                     onPointerMove={(event) => {
