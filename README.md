@@ -30,9 +30,9 @@ TextBee can forward SMS received by an Android phone to Tether. Install and conf
 
 1. Run the updated `supabase/schema.sql` in the Supabase SQL Editor to add the SMS settings table.
 2. Add the Supabase **service role** key as `SUPABASE_SERVICE_ROLE_KEY`. Keep this server-only value out of `NEXT_PUBLIC_*` variables and never commit it.
-3. Set a long random `TETHER_SMS_WEBHOOK_SECRET`.
+3. Set a long random `TETHER_SMS_WEBHOOK_SECRET` and add `TEXTBEE_API_KEY` from the TextBee dashboard. Keep both server-only values private.
 4. In Tether, open Profile > Text to Tether and register the phone number you will send notes from.
-5. In TextBee, configure its inbound-message webhook URL as `https://your-domain.com/api/sms?secret=YOUR_SECRET`.
+5. In TextBee, configure its inbound-message webhook URL as `https://your-domain.com/api/sms?secret=YOUR_SECRET`. When a user connects their number in Tether, TextBee sends them a welcome message with SMS shortcuts.
 
 Tether accepts JSON or form-encoded webhook payloads with common body fields (`body`, `message`, `text`, or `content`) and sender fields (`from`, `sender`, or `phone`). Every incoming SMS becomes a private note for the Tether account that registered its sending number, tagged `source:sms`. SMS text can include `#tag` or `##tag` to create main or sub tags.
 

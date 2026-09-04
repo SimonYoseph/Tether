@@ -4,12 +4,14 @@ create table if not exists public.tethers (
   title text not null,
   description text,
   tags text[],
+  outline_color text,
   is_public boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 alter table public.tethers add column if not exists updated_at timestamp with time zone default timezone('utc'::text, now()) not null;
+alter table public.tethers add column if not exists outline_color text;
 
 create or replace function public.set_tether_updated_at()
 returns trigger
@@ -51,9 +53,17 @@ create table if not exists public.tether_sms_settings (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create table if not exists public.tether_tag_settings (
+  user_id uuid references auth.users(id) on delete cascade not null,
+  tag text not null,
+  color text not null,
+  primary key (user_id, tag)
+);
+
 alter table public.tethers enable row level security;
 alter table public.tether_pulls enable row level security;
 alter table public.tether_sms_settings enable row level security;
+alter table public.tether_tag_settings enable row level security;
 
 do $$
 begin
@@ -77,6 +87,9 @@ begin
   end if;
   if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_sms_settings' and policyname = 'Users can manage their SMS settings') then
     create policy "Users can manage their SMS settings" on public.tether_sms_settings for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_tag_settings' and policyname = 'Users can manage their tag settings') then
+    create policy "Users can manage their tag settings" on public.tether_tag_settings for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
   end if;
 end;
 $$;

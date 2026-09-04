@@ -38,6 +38,7 @@ type Note = {
   title: string;
   description: string | null;
   tags: string[] | null;
+  outline_color?: string | null;
   created_at: string;
   updated_at?: string | null;
 };
@@ -246,6 +247,11 @@ export default function Home() {
           .eq("user_id", data.user.id)
           .maybeSingle();
         if (settings?.phone_number) setSmsPhone(settings.phone_number);
+        const { data: tagSettings } = await supabase
+          .from("tether_tag_settings")
+          .select("tag, color")
+          .eq("user_id", data.user.id);
+        if (tagSettings?.length) setTagColors((current) => ({ ...current, ...Object.fromEntries(tagSettings.map((setting) => [setting.tag, setting.color])) }));
       }
       await loadNotes(data.user?.id);
       setLoading(false);
@@ -275,7 +281,7 @@ export default function Home() {
     if (!userId) return;
     const { data, error } = await supabase
       .from("tethers")
-      .select("id, title, description, tags, created_at, updated_at")
+      .select("id, title, description, tags, outline_color, created_at, updated_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: sortOldest });
     if (!error) setNotes((data as Note[]) ?? []);
@@ -323,8 +329,13 @@ export default function Home() {
     if (phoneNumber.length < 8) return setSmsMessage("Enter your full phone number, including country code.");
     setSmsSaving(true);
     setSmsMessage("");
-    const { error } = await supabase.from("tether_sms_settings").upsert({ user_id: user.id, phone_number: phoneNumber, updated_at: new Date().toISOString() });
-    setSmsMessage(error ? error.message : "Your phone is ready to send notes to Tether.");
+    const { error } = await supabase.from("tether_sms_settings").upsert({ user_id: user.id, phone_number: `+${phoneNumber}`, updated_at: new Date().toISOString() });
+    if (error) setSmsMessage(error.message);
+    else {
+      setSmsPhone(`+${phoneNumber}`);
+      const welcome = await fetch("/api/sms/welcome", { method: "POST" });
+      setSmsMessage(welcome.ok ? "Your phone is ready. Check for a welcome text from Tether." : "Your phone is saved. The welcome text will send after the SMS gateway is connected.");
+    }
     setSmsSaving(false);
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
@@ -663,7 +674,7 @@ export default function Home() {
             </div>
           </div>
         </header>
-        {smsSetupOpen && <div className="confirm-backdrop" role="presentation" onMouseDown={() => setSmsSetupOpen(false)}><section className="sms-setup-panel" role="dialog" aria-modal="true" aria-labelledby="sms-setup-title" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="close-button" onClick={() => setSmsSetupOpen(false)} aria-label="Close SMS setup"><X size={18} /></button><span className="sms-setup-icon"><Smartphone size={22} /></span><h2 id="sms-setup-title">Text to Tether</h2><p>Register the phone number you will text from. Incoming messages from this number will become private notes in your workspace.</p><form onSubmit={saveSmsSettings}><label>Your phone number<input required value={smsPhone} onChange={(event) => setSmsPhone(event.target.value)} placeholder="+1 555 123 4567" autoComplete="tel" /></label><button className="primary-button" disabled={smsSaving}>{smsSaving ? "Saving..." : "Save phone number"}</button></form><div className="sms-webhook"><strong>TextBee webhook</strong><code>/api/sms?secret=YOUR_SECRET</code><small>Add this path to your public Tether URL in TextBee. The secret is set once in your deployment environment.</small></div>{smsMessage && <p className="sms-message" role="status">{smsMessage}</p>}</section></div>}
+        {smsSetupOpen && <div className="confirm-backdrop" role="presentation" onMouseDown={() => setSmsSetupOpen(false)}><section className="sms-setup-panel" role="dialog" aria-modal="true" aria-labelledby="sms-setup-title" onMouseDown={(event) => event.stopPropagation()}><button type="button" className="close-button" onClick={() => setSmsSetupOpen(false)} aria-label="Close SMS setup"><X size={18} /></button><span className="sms-setup-icon"><Smartphone size={22} /></span><h2 id="sms-setup-title">Text to Tether</h2><p>Connect the number you will text from. Tether will send a welcome message with the shortcuts you can use to create notes and tags.</p><form onSubmit={saveSmsSettings}><label>Your phone number<input required value={smsPhone} onChange={(event) => setSmsPhone(event.target.value)} placeholder="+1 555 123 4567" autoComplete="tel" /></label><button className="primary-button" disabled={smsSaving}>{smsSaving ? "Connecting..." : "Connect my number"}</button></form>{smsMessage && <p className="sms-message" role="status">{smsMessage}</p>}</section></div>}
         <section className="search-header">
           <div className="subheader-line">
             <span>Your Thought Space</span>
@@ -816,7 +827,7 @@ export default function Home() {
             ) : (
               visibleNotes.map((note, index) => {
                 const point = positions[note.id] ?? initialNotePoint(index, visibleNotes.length);
-                const noteTagColor = note.tags?.map((tag) => tagColors[tag]).find(Boolean);
+                const noteTagColor = note.outline_color ?? note.tags?.map((tag) => tagColors[tag]).find(Boolean);
                 return (
                   <article
                     className={`note-card ${noteTagColor ? "has-tag-color" : ""} ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
@@ -833,7 +844,7 @@ export default function Home() {
                     <div className="note-card-top">
                       <div className="note-tags">
                         {note.tags?.map((tag) => (
-                          <span className="tag-chip" key={tag} style={tagChipStyle(tagColors[tag])}><Hash size={11} /> {tag}</span>
+                          <span className="tag-chip" key={tag} style={tagChipStyle(tagColors[tag] ?? note.outline_color ?? undefined)}><Hash size={11} /> {tag}</span>
                         ))}
                       </div>
                       <div className="note-times">
