@@ -218,6 +218,8 @@ export default function Home() {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
   const [editTags, setEditTags] = useState("");
+  const editOriginalRef = useRef({ title: "", body: "", tags: "" });
+  const [confirmEditExit, setConfirmEditExit] = useState(false);
   useEffect(() => {
     async function load() {
       const savedTheme = window.localStorage.getItem(
@@ -262,6 +264,18 @@ export default function Home() {
     );
     return () => listener.subscription.unsubscribe();
   }, []);
+  useEffect(() => {
+    if (!editingId || confirmEditExit) return;
+    function closeEdit(event: MouseEvent) {
+      const target = event.target;
+      if (target instanceof Element && target.closest(`[data-note-id="${editingId}"]`)) return;
+      const changed = editOriginalRef.current.title !== editTitle || editOriginalRef.current.body !== editBody || editOriginalRef.current.tags !== editTags;
+      if (changed) setConfirmEditExit(true);
+      else setEditingId(null);
+    }
+    document.addEventListener("mousedown", closeEdit);
+    return () => document.removeEventListener("mousedown", closeEdit);
+  }, [confirmEditExit, editBody, editTags, editTitle, editingId]);
   useEffect(() => { function closeView(event: MouseEvent) { const target = event.target; if (!(target instanceof Element) || !target.closest(".view-options-wrap")) setViewOpen(false); } document.addEventListener("mousedown", closeView); return () => document.removeEventListener("mousedown", closeView); }, []);
   useEffect(() => {
     function closeTagPicker(event: MouseEvent) {
@@ -383,19 +397,29 @@ export default function Home() {
     }
   }
   function beginEdit(note: Note) {
+    const original = { title: note.title, body: note.description ?? note.title, tags: note.tags?.join(", ") ?? "" };
     setEditingId(note.id);
-    setEditTitle(note.title);
-    setEditBody(note.description ?? note.title);
-    setEditTags(note.tags?.join(", ") ?? "");
+    editOriginalRef.current = original;
+    setEditTitle(original.title);
+    setEditBody(original.body);
+    setEditTags(original.tags);
   }
-  async function saveEdit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function persistEdit() {
     if (!editingId || !editBody.trim() || !user || !isSupabaseConfigured) return;
     const nextTitle = noteTitle(editBody, editTitle);
     const nextTags = applyKeywordTags([...editTags.split(",").map((tag) => tag.trim()).filter(Boolean), ...tagsFromBody(editBody)], nextTitle, editBody);
     ensureTagColors(nextTags);
     const { error } = await supabase.from("tethers").update({ title: nextTitle, description: editBody.trim(), tags: nextTags }).eq("id", editingId).eq("user_id", user.id);
-    if (error) setMessage(error.message); else { setEditingId(null); await loadNotes(user.id); }
+    if (error) setMessage(error.message); else { setEditingId(null); setConfirmEditExit(false); await loadNotes(user.id); }
+  }
+  async function saveEdit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await persistEdit();
+  }
+  function requestEditExit() {
+    const changed = editOriginalRef.current.title !== editTitle || editOriginalRef.current.body !== editBody || editOriginalRef.current.tags !== editTags;
+    if (changed) setConfirmEditExit(true);
+    else setEditingId(null);
   }
   function moveNote(event: PointerEvent<HTMLElement>, id: string) {
     if (dragRef.current?.id !== id) return;
@@ -871,7 +895,7 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title (optional)" /><textarea autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Tags" /><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={() => setEditingId(null)}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
+                    {editingId === note.id ? <form className="note-edit-form" onSubmit={saveEdit} onPointerDown={(event) => event.stopPropagation()}><input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} placeholder="Title (optional)" /><textarea autoFocus value={editBody} onChange={(event) => setEditBody(event.target.value)} rows={5} /><input value={editTags} onChange={(event) => setEditTags(event.target.value)} placeholder="Tags" /><div className="note-edit-actions"><button type="button" className="cancel-button" onClick={requestEditExit}>Cancel</button><button className="primary-button" disabled={!editBody.trim()}>Save changes</button></div></form> : <>{note.description && note.description !== note.title && <h3>{note.title}</h3>}{renderNoteContent(note.description ?? note.title)}</>}
                   </article>
                 );
               })
@@ -879,6 +903,7 @@ export default function Home() {
           </div>
         </section>
         {confirmDeleteId && <div className="confirm-backdrop" role="presentation" onMouseDown={cancelDelete}><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="trash-title" onMouseDown={(event) => event.stopPropagation()}><span className="confirm-icon"><Trash2 size={20} /></span><h2 id="trash-title">Move this note to Trash?</h2><p>This note will be removed from your workspace.</p><div className="confirm-actions"><button className="cancel-button" onClick={cancelDelete}>Cancel</button><button className="delete-button" onClick={() => void confirmDelete()}>Move to Trash</button></div></div></div>}
+        {confirmEditExit && <div className="confirm-backdrop" role="presentation"><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-exit-title"><h2 id="edit-exit-title">Save your changes?</h2><p>You changed this note. Save before leaving edit mode?</p><div className="confirm-actions"><button className="cancel-button" onClick={() => setConfirmEditExit(false)}>Keep editing</button><button className="cancel-button" onClick={() => { setEditingId(null); setConfirmEditExit(false); }}>Discard</button><button className="primary-button" onClick={() => void persistEdit()}>Save changes</button></div></div></div>}
         <footer>
           <span>Ideas have somewhere to land.</span>
           <span>Free to use. Yours to keep.</span>
