@@ -3,6 +3,11 @@
 :root { --ink: #283746; --muted: #687989; --paper: #eef2f5; --surface: #ffffff; --line: #cbd4dc; --accent: #1685d2; --acid: #d9e9f4; }
 :root[data-theme="dark"] { --ink: #f1f6fa; --muted: #a5b6c4; --paper: #14283d; --surface: #203b57; --line: #38556f; --accent: #21a0f0; --acid: #c9e9fb; }
 * { box-sizing: border-box; }
+* { scrollbar-width: thin; scrollbar-color: #31506b transparent; }
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background-clip: padding-box; background-color: #31506b; }
+*::-webkit-scrollbar-thumb:hover { background-color: #48aff5; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; transition: background .25s ease, color .25s ease; }
 button, input, textarea { font: inherit; }
@@ -189,7 +194,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .add-note-panel .capture-form textarea { min-height: 84px; transition: min-height .35s cubic-bezier(.22, 1, .36, 1); }
 .add-note-panel.has-content .capture-form textarea { min-height: 152px; }
 .add-note-panel .capture-form > input:first-child { width: 46px; height: 46px; border: 1px solid #48aff5; border-radius: 50%; background: #1685d2; padding: 0; color: #fff; font: 700 10px var(--ui-font); letter-spacing: .04em; text-align: center; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
-.add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { width: 100%; border-radius: 7px; padding: 14px; color: #edf3f7; text-align: left; }
+.add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { width: min(100%, 320px); border-radius: 7px; padding: 14px; color: #edf3f7; text-align: left; }
 .add-note-panel .capture-form > input:first-child::placeholder { color: #fff; opacity: 1; }
 .add-note-panel .capture-form > input:first-child:focus::placeholder, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown)::placeholder { color: #91a09b; }
 .add-note-panel .capture-footer { border-top: 1px solid #294761; }

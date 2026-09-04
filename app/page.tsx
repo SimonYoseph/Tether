@@ -510,6 +510,7 @@ export default function Home() {
           {user ? (
             <form className="capture-form" onSubmit={saveNote}>
               <input
+                maxLength={80}
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder="Title"
