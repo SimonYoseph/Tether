@@ -258,7 +258,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .compact-view .note-times { display: none; }
 .structured-view .notes-canvas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; min-height: 540px; align-content: start; }
 .structured-view .note-card { position: relative; top: auto !important; left: auto !important; width: 100% !important; min-width: 0; max-width: none; min-height: 0; justify-self: stretch; align-self: start; padding: 18px; transform: none !important; }
-.structured-view .note-card-top { display: grid; grid-template-columns: minmax(120px, 1fr) 125px; align-items: start; min-height: 42px; }
+.structured-view .note-card-top { display: grid; grid-template-columns: minmax(120px, 170px) 125px; justify-content: start; align-items: start; min-height: 42px; }
 .structured-view .note-tags { align-content: start; justify-content: flex-start; }
 .structured-view .note-card > h3 { margin-top: 20px; }
 .structured-view .note-card > p, .structured-view .note-card > ul, .structured-view .note-card > ol { margin-top: 20px; }
