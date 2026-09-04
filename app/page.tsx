@@ -12,6 +12,7 @@ import {
 } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Check,
   CircleUserRound,
@@ -19,7 +20,6 @@ import {
   Hash,
   Link2,
   LoaderCircle,
-  LogIn,
   LogOut,
   Palette,
   Plus,
@@ -154,6 +154,7 @@ function renderNoteContent(text: string): ReactNode[] {
 }
 
 export default function Home() {
+  const router = useRouter();
   useEffect(() => {
     function closeProfile(event: MouseEvent) {
       const target = event.target;
@@ -163,10 +164,6 @@ export default function Home() {
     document.addEventListener("mousedown", closeProfile);
     return () => document.removeEventListener("mousedown", closeProfile);
   }, []);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
-  const [authMessage, setAuthMessage] = useState("");
   const [user, setUser] = useState<{ id: string } | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [body, setBody] = useState("");
@@ -194,7 +191,6 @@ export default function Home() {
   const [dragging, setDragging] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>("black");
   const [addOpen, setAddOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -296,40 +292,13 @@ export default function Home() {
       return next;
     });
   }
-  async function authenticate(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setAuthLoading(true);
-    setAuthMessage("");
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setAuthMessage(error.message);
-    else if (data.user) {
-      setUser(data.user);
-      await loadNotes(data.user.id);
-      setPassword("");
-      setAuthOpen(false);
-    }
-    setAuthLoading(false);
-  }
-  async function signUp() {
-    setAuthLoading(true);
-    setAuthMessage("");
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) setAuthMessage(error.message);
-    else if (data.session?.user) {
-      setUser(data.session.user);
-      await loadNotes(data.session.user.id);
-      setPassword("");
-      setAuthOpen(false);
-    } else setAuthMessage("Check your email to confirm your account, then sign in.");
-    setAuthLoading(false);
-  }
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) return setMessage(error.message);
     setUser(null);
     setNotes([]);
-    setAuthOpen(false);
     setProfileOpen(false);
+    router.replace("/login");
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -643,15 +612,9 @@ export default function Home() {
                   <button className={theme === "black" ? "selected" : ""} onClick={() => chooseTheme("black")}>Black</button>
                 </div>
               </div>
-              {user ? (
-                <button className="menu-signout" onClick={() => void signOut()}>
-                  <LogOut size={15} /> Sign out
-                </button>
-              ) : (
-                <button className="menu-signin" onClick={() => { setProfileOpen(false); setAuthOpen(true); }}>
-                  <LogIn size={15} /> Sign in
-                </button>
-              )}
+              <button className="menu-signout" onClick={() => void signOut()}>
+                <LogOut size={15} /> Sign out
+              </button>
             </div>
           </div>
         </header>
@@ -672,7 +635,7 @@ export default function Home() {
             </div>
             <button
               className="add-note-button"
-              onClick={() => user ? setAddOpen(!addOpen) : setAuthOpen(true)}
+              onClick={() => setAddOpen(!addOpen)}
               aria-label="Add a note"
               title="Add a note"
             >
@@ -720,14 +683,13 @@ export default function Home() {
           <span className="connected-state">Connected</span>
         </div>
         <section
-          className={`add-note-panel ${addOpen || authOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
-          aria-hidden={!addOpen && !authOpen}
+          className={`add-note-panel ${addOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
+          aria-hidden={!addOpen}
         >
-          {user && <div className="add-note-heading">
+          <div className="add-note-heading">
             <span className="section-label-text">NEW NOTE</span>
-          </div>}
-          {user ? (
-            <form className="capture-form" onSubmit={saveNote}>
+          </div>
+          <form className="capture-form" onSubmit={saveNote}>
               <input
                 maxLength={80}
                 value={title}
@@ -770,36 +732,6 @@ export default function Home() {
                 </div>
               </div>
             </form>
-          ) : (
-            <div className="account-card" id="account">
-              <button type="button" className="close-button" onClick={() => setAuthOpen(false)} aria-label="Close sign in panel"><X size={18} /></button>
-              <CircleUserRound size={23} />
-              <h3>Keep it with you.</h3>
-              <p>Sign in to keep your notes available across devices.</p>
-              <form onSubmit={authenticate}>
-                <input
-                  required
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="Email address"
-                />
-                <input
-                  required
-                  minLength={6}
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Password"
-                />
-                <div className="auth-actions">
-                  <button className="primary-button" disabled={authLoading}>{authLoading ? "Signing in..." : "Sign in"}</button>
-                  <button type="button" className="auth-signup" onClick={() => void signUp()} disabled={authLoading}>Create account</button>
-                </div>
-                {authMessage && <p className="auth-message" role="alert">{authMessage}</p>}
-              </form>
-            </div>
-          )}
           {message && <p className="message">{message}</p>}
         </section>
         <section className="notes-panel">

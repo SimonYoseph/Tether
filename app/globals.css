@@ -338,3 +338,20 @@ footer { margin-top: 30px; color: #5f7483; }
 :root[data-theme="light"] .add-note-panel .capture-form > input, :root[data-theme="light"] .add-note-panel .capture-form textarea { color: #283746; }
 .tag-chip { font-weight: 800 !important; }
 .brand-wordmark { -webkit-text-stroke: .35px #0b141d; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .16), 0 5px 10px rgba(0, 0, 0, .28); }
+.login-page { display: grid; min-height: 100vh; place-items: center; background: #06090d; color: #edf3f7; padding: 24px; }
+.login-panel { width: min(100%, 390px); border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 12px 12px 0 rgba(0, 0, 0, .2); padding: 32px; }
+.login-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #48aff5; }
+.login-kicker { margin: 24px 0 7px; color: #48aff5; font: 700 10px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.login-panel h1 { margin: 0; font: 400 29px/1.05 Herculanum, "Rockwell Extra Bold", Rockwell, serif; letter-spacing: .03em; }
+.login-copy { margin: 10px 0 24px; color: #9eb4c4; font: 13px/1.45 "Courier New", Courier, monospace; }
+.login-form { display: grid; gap: 13px; }
+.login-form label { display: grid; gap: 6px; color: #9eb4c4; font: 700 10px Arial, sans-serif; letter-spacing: .07em; text-transform: uppercase; }
+.login-form input { border: 1px solid #31506b; border-radius: 6px; background: #172a3d; color: #edf3f7; outline: 0; padding: 11px 12px; font: 14px "Courier New", Courier, monospace; letter-spacing: 0; text-transform: none; }
+.login-form input:focus { border-color: #48aff5; box-shadow: 0 0 0 3px rgba(72, 175, 245, .12); }
+.login-submit, .login-signup { display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 6px; padding: 12px; font: 700 11px "Courier New", Courier, monospace; letter-spacing: .05em; text-transform: uppercase; }
+.login-submit { border: 1px solid #48aff5; background: #48aff5; color: #071019; }
+.login-signup { border: 1px solid #31506b; background: transparent; color: #d6edfc; }
+.login-submit:hover { background: #6acbff; }
+.login-signup:hover { border-color: #48aff5; color: #48aff5; }
+.login-submit:disabled, .login-signup:disabled { cursor: not-allowed; opacity: .55; }
+.login-message { margin: 0; color: #ff927b; font: 11px/1.4 "Courier New", Courier, monospace; }
