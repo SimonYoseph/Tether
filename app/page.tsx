@@ -168,6 +168,7 @@ export default function Home() {
   const dragStartPoint = useRef<Point | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
   const [trashHover, setTrashHover] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   useEffect(() => {
     async function load() {
       const savedTheme = window.localStorage.getItem(
@@ -297,16 +298,23 @@ export default function Home() {
       dragStartPoint.current = null;
       return;
     }
-    if (!window.confirm("Move this note to Trash?")) {
-      if (dragStartPoint.current) setPositions((current) => ({ ...current, [id]: dragStartPoint.current as Point }));
-      dragStartPoint.current = null;
-      return;
-    }
+    setConfirmDeleteId(id);
+    return;
+  }
+  async function confirmDelete() {
+    if (!confirmDeleteId) return;
+    const id = confirmDeleteId;
     if (isSupabaseConfigured && user) {
       const { error } = await supabase.from("tethers").delete().eq("id", id).eq("user_id", user.id);
       if (error) return setMessage(error.message);
     }
     setNotes((current) => current.filter((note) => note.id !== id));
+    setConfirmDeleteId(null);
+    dragStartPoint.current = null;
+  }
+  function cancelDelete() {
+    if (confirmDeleteId && dragStartPoint.current) setPositions((current) => ({ ...current, [confirmDeleteId]: dragStartPoint.current as Point }));
+    setConfirmDeleteId(null);
     dragStartPoint.current = null;
   }
   function startDragging(event: PointerEvent<HTMLElement>, id: string) {
@@ -601,7 +609,7 @@ export default function Home() {
                   defaultPoints[index % defaultPoints.length];
                 return (
                   <article
-                    className={`note-card ${dragging === note.id ? "is-dragging" : ""}`}
+                    className={`note-card ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
                     key={note.id}
                     style={{ left: `${point.x}%`, top: `${point.y}%` }}
                     onPointerDown={(event) => startDragging(event, note.id)}
@@ -632,6 +640,7 @@ export default function Home() {
             )}
           </div>
         </section>
+        {confirmDeleteId && <div className="confirm-backdrop" role="presentation" onMouseDown={cancelDelete}><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="trash-title" onMouseDown={(event) => event.stopPropagation()}><span className="confirm-icon"><Trash2 size={20} /></span><h2 id="trash-title">Move this note to Trash?</h2><p>This note will be removed from your workspace.</p><div className="confirm-actions"><button className="cancel-button" onClick={cancelDelete}>Cancel</button><button className="delete-button" onClick={() => void confirmDelete()}>Move to Trash</button></div></div></div>}
         <footer>
           <span>Ideas have somewhere to land.</span>
           <span>Free to use. Yours to keep.</span>

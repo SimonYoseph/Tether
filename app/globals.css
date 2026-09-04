@@ -200,6 +200,19 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .notes-heading { border: 0; }
 .trash-button { display: grid; width: 38px; height: 38px; margin-left: 12px; place-items: center; border: 1px solid #294761; border-radius: 50%; background: transparent; color: #8fa6b5; padding: 0; }
 .trash-button:hover, .trash-button.is-hovered { border-color: #ff927b; background: #422b2a; color: #ffb0a0; }
+.confirm-backdrop { position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; background: rgba(3, 8, 13, .72); padding: 20px; animation: fade-in .2s ease-out; }
+.confirm-dialog { width: min(100%, 360px); border: 1px solid #38556f; border-radius: 12px; background: #111b25; box-shadow: 0 24px 70px rgba(0, 0, 0, .45); padding: 24px; color: #edf3f7; text-align: center; animation: dialog-in .25s cubic-bezier(.22, 1, .36, 1); }
+.confirm-icon { display: grid; width: 42px; height: 42px; place-items: center; margin: 0 auto 15px; border-radius: 50%; background: #422b2a; color: #ff927b; }
+.confirm-dialog h2 { margin: 0; font-size: 19px; }
+.confirm-dialog p { margin: 8px 0 22px; color: #9eb4c4; font: 12px/1.4 var(--ui-font); }
+.confirm-actions { display: flex; justify-content: center; gap: 9px; }
+.cancel-button, .delete-button { border-radius: 6px; padding: 11px 14px; font: 700 10px var(--ui-font); }
+.cancel-button { border: 1px solid #38556f; background: transparent; color: #b9c9d3; }
+.delete-button { border: 1px solid #ff927b; background: #ff927b; color: #241312; }
+.cancel-button:hover { border-color: #8fa6b5; color: #fff; }
+.delete-button:hover { background: #ffb0a0; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(-10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .canvas-intro { margin-top: 9px; }
 .notes-canvas { min-height: 620px; border: 0; background: #06090d; }
 :root[data-theme="black"] .profile-button { border-color: #31506b; background: #172a3d; color: #d6edfc; }
@@ -221,6 +234,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .note-card { border: 1px solid #294761; border-radius: 8px; background: #151f29; box-shadow: 0 10px 24px rgba(0, 0, 0, .22); }
 .note-card:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, .36); }
 .note-card.is-dragging { box-shadow: 0 15px 35px rgba(0, 0, 0, .5); }
+.note-card.is-trash-hover { background: rgba(21, 31, 41, .24); border-color: #ff927b; box-shadow: 0 10px 24px rgba(255, 111, 97, .2); }
+.note-card.is-trash-hover { opacity: .28; background: transparent !important; }
 .note-card > p { color: #edf3f7; }
 .audience-strip, footer { border: 0; }
 :root[data-theme="charcoal"] .app-shell { background: #20252b; }
