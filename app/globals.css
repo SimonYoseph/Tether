@@ -118,6 +118,11 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
 .note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 var(--ui-font); }
+.note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 700 14px/1.3 var(--ui-font); }
+.note-card > ul, .note-card > ol { margin: 16px 0 4px; padding-left: 22px; color: var(--ink); font: 600 15px/1.45 var(--ui-font); }
+.note-card > ul { list-style-type: disc; }
+.note-card > ol { list-style-type: decimal; }
+.note-card li { margin: 3px 0; padding-left: 3px; }
 .note-times { display: grid; gap: 3px; color: var(--muted); font: 8px/1.25 var(--ui-font); letter-spacing: .01em; text-align: right; }
 .note-close { position: absolute; top: 7px; right: 7px; display: none; }
 .note-card:hover .note-close { display: block; }
