@@ -1,4 +1,4 @@
-create table public.tethers (
+create table if not exists public.tethers (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users(id) on delete cascade not null,
   title text not null,
@@ -36,7 +36,7 @@ begin
 end;
 $$;
 
-create table public.tether_pulls (
+create table if not exists public.tether_pulls (
   id uuid default gen_random_uuid() primary key,
   tether_id uuid references public.tethers(id) on delete cascade not null,
   pulled_by uuid references auth.users(id) on delete cascade not null,
@@ -47,13 +47,22 @@ create table public.tether_pulls (
 alter table public.tethers enable row level security;
 alter table public.tether_pulls enable row level security;
 
-create policy "Public tethers are viewable"
-  on public.tethers for select using (is_public = true or (select auth.uid()) = user_id);
-create policy "Users can create their own tethers"
-  on public.tethers for insert with check ((select auth.uid()) = user_id);
-create policy "Users can update their own tethers"
-  on public.tethers for update using ((select auth.uid()) = user_id);
-create policy "Users can pull tethers"
-  on public.tether_pulls for insert with check ((select auth.uid()) = pulled_by);
-create policy "Pull counts are viewable"
-  on public.tether_pulls for select using (true);
+do $$
+begin
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tethers' and policyname = 'Public tethers are viewable') then
+    create policy "Public tethers are viewable" on public.tethers for select using (is_public = true or (select auth.uid()) = user_id);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tethers' and policyname = 'Users can create their own tethers') then
+    create policy "Users can create their own tethers" on public.tethers for insert with check ((select auth.uid()) = user_id);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tethers' and policyname = 'Users can update their own tethers') then
+    create policy "Users can update their own tethers" on public.tethers for update using ((select auth.uid()) = user_id);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_pulls' and policyname = 'Users can pull tethers') then
+    create policy "Users can pull tethers" on public.tether_pulls for insert with check ((select auth.uid()) = pulled_by);
+  end if;
+  if not exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'tether_pulls' and policyname = 'Pull counts are viewable') then
+    create policy "Pull counts are viewable" on public.tether_pulls for select using (true);
+  end if;
+end;
+$$;
