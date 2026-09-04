@@ -74,6 +74,10 @@ button { cursor: pointer; }
 .tag-color-presets { display: flex; gap: 8px; }
 .tag-color-presets button { width: 22px; height: 22px; border: 2px solid transparent; border-radius: 50%; padding: 0; }
 .tag-color-presets button.selected { border-color: #fff; box-shadow: 0 0 0 1px #48aff5; }
+.tag-color-presets .custom-color-button { display: grid; place-items: center; border-color: #dce5eb; background: conic-gradient(#ff5b5b, #f6d45b, #61d98c, #4cc5f5, #9e7aff, #ff5b5b); color: #111b25; }
+.tag-color-presets .custom-color-button.selected { color: #fff; }
+.custom-color-menu { position: absolute; top: 82px; left: 13px; display: grid; width: 214px; gap: 9px; border: 1px solid #31506b; border-radius: 6px; background: #172a3d; box-shadow: 0 12px 26px rgba(0, 0, 0, .35); padding: 10px; }
+.tag-color-hex { min-width: 0; border: 1px solid #31506b; border-radius: 5px; background: #111b25; color: #edf3f7; outline: 0; padding: 7px 8px; font: 11px var(--ui-font); }
 .tag-tools { position: relative; }
 .tag-picker-menu { position: absolute; z-index: 25; top: 38px; left: 0; display: grid; width: 240px; gap: 10px; border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); padding: 13px; color: #dfeaf0; }
 .tag-picker-menu strong { font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
