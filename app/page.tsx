@@ -414,7 +414,10 @@ export default function Home() {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const needsNewLine = start > 0 && body[start - 1] !== "\n";
-    const insertion = `${needsNewLine ? "\n" : ""}${marker}`;
+    const lastLine = body.slice(0, start).split("\n").reverse().find((line) => line.trim());
+    const lastNumber = marker === "1. " ? lastLine?.match(/^\s*(\d+)[.)]\s+/)?.[1] : undefined;
+    const nextMarker = lastNumber ? `${Number(lastNumber) + 1}. ` : marker;
+    const insertion = `${needsNewLine ? "\n" : ""}${nextMarker}`;
     const nextValue = `${body.slice(0, start)}${insertion}${body.slice(end)}`;
     setBody(nextValue);
     requestAnimationFrame(() => {
@@ -691,8 +694,8 @@ export default function Home() {
                 rows={5}
               />
               <div className="list-tools" aria-label="Insert list">
-                <button type="button" onClick={() => insertList("- ")} aria-label="Insert bullet list" title="Insert bullet list">•</button>
-                <button type="button" onClick={() => insertList("1. ")} aria-label="Insert numbered list" title="Insert numbered list">1.</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertList("- ")} aria-label="Insert bullet list" title="Insert bullet list">•</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertList("1. ")} aria-label="Insert numbered list" title="Insert numbered list">1.</button>
               </div>
               <div className="capture-footer">
                 <label className="tag-field">

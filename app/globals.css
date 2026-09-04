@@ -115,7 +115,7 @@ kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font
 .add-note-heading { display: flex; align-items: center; justify-content: space-between; }
 .add-note-heading h2 { margin: 8px 0 0; font-size: 24px; font-weight: 400; }
 .add-note-heading h2 { display: none; }
-.section-label-text { color: var(--accent); font: 700 10px Arial, sans-serif; letter-spacing: .12em; }
+.section-label-text { color: var(--accent); font: 700 12px Arial, sans-serif; letter-spacing: .12em; }
 .close-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: #ff6f61; }
 .close-button:hover { border-color: #ff6f61; background: rgba(255, 111, 97, .12); color: #ff8f83; }
 .add-note-panel .capture-form { margin-top: 20px; border: 0; }
@@ -132,7 +132,7 @@ kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font
 .section-label h2 { margin: 0; font-size: 24px; font-weight: 400; letter-spacing: -.03em; }
 .capture-form, .account-card { margin-top: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .capture-form > input, .capture-form textarea { display: block; width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); outline: 0; padding: 14px; }
-.capture-form > input { font-size: 14px; }
+.capture-form > input { font-size: 17px; }
 .capture-form textarea { min-height: 152px; resize: vertical; font-size: 17px; line-height: 1.35; }
 input::placeholder, textarea::placeholder { color: #91a09b; }
 .capture-footer { justify-content: space-between; gap: 8px; padding: 9px 10px 9px 13px; }
@@ -232,7 +232,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .add-note-panel .capture-form > input, .add-note-panel .capture-form textarea { color: #edf3f7; }
 .add-note-panel .capture-form textarea { min-height: 84px; transition: min-height .35s cubic-bezier(.22, 1, .36, 1); }
 .add-note-panel.has-content .capture-form textarea { min-height: 152px; }
-.add-note-panel .capture-form > input:first-child { width: 76px; height: 38px; border: 1px solid #38556f; border-radius: 7px; background: #111b25; padding: 0 12px; color: #edf3f7; font: 700 10px var(--ui-font); letter-spacing: .04em; text-align: left; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
+.add-note-panel .capture-form > input:first-child { width: 96px; height: 42px; border: 1px solid #38556f; border-radius: 7px; background: #111b25; padding: 0 12px; color: #edf3f7; font: 700 16px var(--ui-font); letter-spacing: .04em; text-align: left; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
+.add-note-heading .section-label-text { font-size: 12px; }
 .add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { width: min(100%, 320px); border-radius: 7px; padding: 14px; color: #edf3f7; text-align: left; }
 .add-note-panel .capture-form > input:first-child::placeholder { color: #fff; opacity: 1; }
 .add-note-panel .capture-form > input:first-child:focus::placeholder, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown)::placeholder { color: #91a09b; }
