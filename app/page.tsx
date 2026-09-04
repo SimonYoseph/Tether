@@ -22,8 +22,21 @@ export default function Home() {
       if (event.key !== "Enter" || !(event.target instanceof HTMLTextAreaElement) || !event.target.closest(".capture-form")) return;
       const textarea = event.target;
       const line = textarea.value.slice(0, textarea.selectionStart).split("\n").pop() ?? "";
+      const emptyUnordered = line.match(/^(\s*)([-*•])\s*$/);
+      const emptyOrdered = line.match(/^(\s*)(\d+)([.)])\s*$/);
       const unordered = line.match(/^(\s*)([-*•])\s+.+$/);
       const ordered = line.match(/^(\s*)(\d+)([.)])\s+.+$/);
+      if (emptyUnordered || emptyOrdered) {
+        event.preventDefault();
+        const start = textarea.selectionStart;
+        const lineStart = start - line.length;
+        const nextValue = `${textarea.value.slice(0, lineStart)}\n${textarea.value.slice(textarea.selectionEnd)}`;
+        const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+        setter?.call(textarea, nextValue);
+        textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        requestAnimationFrame(() => textarea.setSelectionRange(lineStart + 1, lineStart + 1));
+        return;
+      }
       if (!unordered && !ordered) return;
       event.preventDefault();
       const indent = unordered?.[1] ?? ordered?.[1] ?? "";
