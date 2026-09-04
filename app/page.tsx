@@ -320,10 +320,18 @@ export default function Home() {
   async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
     const trashBounds = trashRef.current?.getBoundingClientRect();
     const noteBounds = event.currentTarget.getBoundingClientRect();
+    const canvasBounds = event.currentTarget.parentElement?.getBoundingClientRect();
     setDragging(null);
     dragRef.current = null;
     setTrashHover(false);
-    if (!trashBounds || noteBounds.right < trashBounds.left || noteBounds.left > trashBounds.right || noteBounds.bottom < trashBounds.top || noteBounds.top > trashBounds.bottom) {
+    const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
+    const releasedAboveCanvas = Boolean(canvasBounds && noteBounds.top < canvasBounds.top);
+    if (!overlapsTrash && releasedAboveCanvas) {
+      if (dragStartPoint.current) setPositions((current) => ({ ...current, [id]: dragStartPoint.current as Point }));
+      dragStartPoint.current = null;
+      return;
+    }
+    if (!overlapsTrash) {
       dragStartPoint.current = null;
       return;
     }
@@ -572,7 +580,6 @@ export default function Home() {
         <section className="notes-panel">
           <div className="notes-heading">
             <div className="section-label">
-              <span>01</span>
               <h2>Notes</h2>
             </div>
             <div className="note-heading-actions">
