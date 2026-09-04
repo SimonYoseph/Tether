@@ -340,10 +340,12 @@ footer { margin-top: 30px; color: #5f7483; }
 .brand-wordmark { -webkit-text-stroke: .45px #071019; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .1), 0 4px 8px rgba(0, 0, 0, .28); }
 .login-page { display: grid; min-height: 100vh; place-items: center; background: #06090d; color: #edf3f7; padding: 24px; }
 .login-panel { width: min(100%, 390px); border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 12px 12px 0 rgba(0, 0, 0, .2); padding: 32px; }
-.login-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #48aff5; }
-.login-kicker { margin: 24px 0 7px; color: #48aff5; font: 700 10px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
-.login-panel h1 { margin: 0; font: 400 29px/1.05 Herculanum, "Rockwell Extra Bold", Rockwell, serif; letter-spacing: .03em; }
-.login-copy { margin: 10px 0 24px; color: #9eb4c4; font: 13px/1.45 "Courier New", Courier, monospace; }
+.login-brand { display: flex; align-items: center; gap: 13px; }
+.login-brand .brand-logo { width: 52px; height: 52px; }
+.login-brand .brand-wordmark { font-size: 27px; }
+.login-intro { margin: 22px 0 24px; }
+.login-intro strong { color: #edf3f7; font: 800 14px var(--ui-font); }
+.login-intro p { margin: 5px 0 0; color: #9eb4c4; font: 12px/1.45 "Courier New", Courier, monospace; }
 .login-form { display: grid; gap: 13px; }
 .login-form label { display: grid; gap: 6px; color: #9eb4c4; font: 700 10px Arial, sans-serif; letter-spacing: .07em; text-transform: uppercase; }
 .login-form input { border: 1px solid #31506b; border-radius: 6px; background: #172a3d; color: #edf3f7; outline: 0; padding: 11px 12px; font: 14px "Courier New", Courier, monospace; letter-spacing: 0; text-transform: none; }
