@@ -26,7 +26,8 @@ export default function Home() {
       const ordered = line.match(/^(\s*)(\d+)([.)])\s+.+$/);
       if (!unordered && !ordered) return;
       event.preventDefault();
-      const prefix = unordered ? `${unordered[1]}${unordered[2]} ` : `${ordered?.[1]}${Number(ordered?.[2]) + 1}${ordered?.[3]} `;
+      const indent = unordered?.[1] ?? ordered?.[1] ?? "";
+      const prefix = unordered ? `${indent}  ${unordered[2]} ` : `${indent}  ${Number(ordered?.[2]) + 1}${ordered?.[3]} `;
       const start = textarea.selectionStart;
       const nextValue = `${textarea.value.slice(0, start)}\n${prefix}${textarea.value.slice(textarea.selectionEnd)}`;
       const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
