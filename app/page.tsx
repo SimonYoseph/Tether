@@ -106,6 +106,11 @@ function tagChipStyle(color?: string): CSSProperties {
     backgroundColor: `color-mix(in srgb, ${color} 18%, #172a3d)`,
   };
 }
+function tagsFromBody(text: string) {
+  return Array.from(text.matchAll(/(^|\s)(#{1,2})([\p{L}\p{N}_-]+)/gu), (match) =>
+    `${match[2] === "##" ? "sub" : "main"}:${match[3].replace(/\s+/g, "-")}`,
+  );
+}
 function renderNoteContent(text: string): ReactNode[] {
   const lines = text.split("\n");
   const content: ReactNode[] = [];
@@ -308,10 +313,11 @@ export default function Home() {
         user ? "Add Supabase credentials first." : "Sign in to save notes.",
       );
     const noteTags = applyKeywordTags(
-      tagsInput.split(",").map((tag) => tag.trim()).filter(Boolean),
+      [...tagsInput.split(",").map((tag) => tag.trim()).filter(Boolean), ...tagsFromBody(body)],
       noteTitle(body, title),
       body,
     );
+    ensureTagColors(noteTags);
     const { error } = await supabase.from("tethers").insert({
       user_id: user.id,
       title: noteTitle(body, title),
@@ -339,7 +345,8 @@ export default function Home() {
     event.preventDefault();
     if (!editingId || !editBody.trim() || !user || !isSupabaseConfigured) return;
     const nextTitle = noteTitle(editBody, editTitle);
-    const nextTags = applyKeywordTags(editTags.split(",").map((tag) => tag.trim()).filter(Boolean), nextTitle, editBody);
+    const nextTags = applyKeywordTags([...editTags.split(",").map((tag) => tag.trim()).filter(Boolean), ...tagsFromBody(editBody)], nextTitle, editBody);
+    ensureTagColors(nextTags);
     const { error } = await supabase.from("tethers").update({ title: nextTitle, description: editBody.trim(), tags: nextTags }).eq("id", editingId).eq("user_id", user.id);
     if (error) setMessage(error.message); else { setEditingId(null); await loadNotes(user.id); }
   }
@@ -449,6 +456,19 @@ export default function Home() {
       keywords.some((keyword) => searchableText.includes(keyword.toLowerCase())) ? [tag] : [],
     );
     return Array.from(new Set([...currentTags, ...matchingTags]));
+  }
+
+  function ensureTagColors(tags: string[]) {
+    const nextColors = { ...tagColors };
+    let changed = false;
+    tags.forEach((tag) => {
+      if (nextColors[tag]) return;
+      nextColors[tag] = tagColorPresets[0];
+      changed = true;
+    });
+    if (!changed) return;
+    setTagColors(nextColors);
+    window.localStorage.setItem("tether-tag-colors", JSON.stringify(nextColors));
   }
 
   async function addTag() {
@@ -701,7 +721,7 @@ export default function Home() {
                 ref={noteBodyRef}
                 value={body}
                 onChange={(event) => setBody(event.target.value)}
-                placeholder="Jot it down before it gets away..."
+                placeholder="Jot it down... Use #tag or ##tag"
                 rows={5}
               />
               <div className="list-tools" aria-label="Insert list">
