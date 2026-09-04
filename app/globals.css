@@ -168,7 +168,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-count { color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .canvas-intro { justify-content: space-between; margin: 15px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .notes-canvas { position: relative; min-height: 540px; overflow: visible; }
-.note-card { position: absolute; width: min(240px, 45%); min-height: 118px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 5px 5px 0 color-mix(in srgb, var(--line) 48%, transparent); padding: 14px; touch-action: none; user-select: none; transition: box-shadow .15s ease, transform .15s ease; }
+.note-card { position: absolute; width: fit-content; min-width: 180px; max-width: min(420px, 45%); min-height: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 5px 5px 0 color-mix(in srgb, var(--line) 48%, transparent); padding: 14px; touch-action: none; user-select: none; transition: box-shadow .15s ease, transform .15s ease; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: none; box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
 .note-card.has-tag-color:not(.is-trash-hover) { border-color: var(--note-card-tag-color) !important; }
@@ -257,8 +257,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .compact-view .note-card { min-height: 82px; padding: 11px; }
 .compact-view .note-card > p { margin: 10px 0 2px; font-size: 13px; }
 .compact-view .note-times { display: none; }
-.structured-view .notes-canvas { display: grid; grid-template-columns: repeat(auto-fill, 240px); gap: 16px; min-height: 540px; align-content: start; }
-.structured-view .note-card { position: relative; top: auto !important; left: auto !important; width: 240px; min-height: 118px; transform: none !important; }
+.structured-view .notes-canvas { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, max-content)); gap: 16px; min-height: 540px; align-content: start; }
+.structured-view .note-card { position: relative; top: auto !important; left: auto !important; width: fit-content; min-height: 0; justify-self: start; align-self: start; transform: none !important; }
 .structured-view .note-card:hover { transform: translateY(-2px) !important; }
 .structured-view .empty { grid-column: 1 / -1; }
 .section-label { border: 0; padding-top: 0; }
