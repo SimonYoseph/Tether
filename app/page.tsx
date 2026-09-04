@@ -512,7 +512,7 @@ export default function Home() {
               <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="Title (optional)"
+                placeholder="Title"
               />
               <textarea
                 autoFocus
