@@ -560,8 +560,9 @@ export default function Home() {
               <span>01</span>
               <h2>Notes</h2>
             </div>
+            <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
             <div className="view-options-wrap">
-              <button className="view-options-button" onClick={() => setViewOpen(!viewOpen)} aria-label="Open view options" aria-expanded={viewOpen} title="View options"><Settings2 size={16} /> View</button>
+              <button className="view-options-button" onClick={() => setViewOpen(!viewOpen)} aria-label="Open view options" aria-expanded={viewOpen} title="View options"><Settings2 size={17} /></button>
               <div className={`profile-menu view-menu ${viewOpen ? "is-open" : ""}`} aria-hidden={!viewOpen}>
                 <div className="menu-title">View Options</div>
                 <div className="menu-divider" />
@@ -570,7 +571,6 @@ export default function Home() {
                 <button className="menu-row" onClick={() => setSortOldest(!sortOldest)}><span>Sort: {sortOldest ? "oldest first" : "newest first"}</span><Check size={15} className={sortOldest ? "visible" : "hidden"} /></button>
               </div>
             </div>
-            <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /></button>
           </div>
           <div className="canvas-intro">
             <span>Drag notes anywhere <i className="hint-divider" /> <b className="note-count">{visibleNotes.length} saved</b></span>
