@@ -119,6 +119,9 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
 .note-card > p { margin: 18px 0 4px; font: 600 16px/1.3 var(--ui-font); }
 .note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 700 14px/1.3 var(--ui-font); }
+.list-tools { display: flex; gap: 8px; padding: 8px 14px 0; }
+.list-tools button { display: grid; width: 30px; height: 28px; place-items: center; border: 1px solid #294761; border-radius: 6px; background: #172a3d; color: #d6edfc; font: 700 13px var(--ui-font); }
+.list-tools button:hover { border-color: #48aff5; color: #48aff5; }
 .note-card > ul, .note-card > ol { margin: 16px 0 4px; padding-left: 22px; color: var(--ink); font: 600 15px/1.45 var(--ui-font); }
 .note-card > ul { list-style-type: disc; }
 .note-card > ol { list-style-type: decimal; }
@@ -183,6 +186,9 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .add-note-panel .capture-form > input:first-child::placeholder { color: transparent; }
 .add-note-panel .capture-form > input:first-child:focus::placeholder, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown)::placeholder { color: #91a09b; }
 .add-note-panel .capture-footer { border-top: 1px solid #294761; }
+.list-tools { display: flex; gap: 8px; padding: 8px 14px 0; }
+.list-tools button { display: grid; width: 30px; height: 28px; place-items: center; border: 1px solid #294761; border-radius: 6px; background: #172a3d; color: #d6edfc; font: 700 13px var(--ui-font); }
+.list-tools button:hover { border-color: #48aff5; color: #48aff5; }
 .primary-button { border-radius: 6px; background: #e6f1f7; color: #0b141d; }
 .primary-button:hover { background: #48aff5; }
 .notes-panel { margin-top: 25px; }
@@ -192,6 +198,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .section-label { border: 0; padding-top: 0; }
 .section-label h2 { color: #edf3f7; }
 .notes-heading { border: 0; }
+.trash-button { display: flex; align-items: center; gap: 6px; border: 1px solid #294761; border-radius: 7px; background: transparent; color: #8fa6b5; padding: 7px 10px; font: 700 10px var(--ui-font); text-transform: uppercase; }
+.trash-button:hover, .trash-button.is-hovered { border-color: #ff927b; background: #422b2a; color: #ffb0a0; }
 .canvas-intro { margin-top: 9px; }
 .notes-canvas { min-height: 620px; border: 0; background: #06090d; }
 :root[data-theme="black"] .profile-button { border-color: #31506b; background: #172a3d; color: #d6edfc; }

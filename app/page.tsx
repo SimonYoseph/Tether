@@ -7,6 +7,7 @@ import {
   type ReactNode,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import Link from "next/link";
@@ -21,6 +22,7 @@ import {
   Plus,
   Search,
   Tag,
+  Trash2,
   X,
 } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase";
@@ -134,62 +136,6 @@ function renderNoteContent(text: string): ReactNode[] {
 
 export default function Home() {
   useEffect(() => {
-    function continueList(event: KeyboardEvent) {
-      if (
-        event.key !== "Enter" ||
-        !(event.target instanceof HTMLTextAreaElement) ||
-        !event.target.closest(".capture-form")
-      )
-        return;
-      const textarea = event.target;
-      const line =
-        textarea.value.slice(0, textarea.selectionStart).split("\n").pop() ??
-        "";
-      const emptyUnordered = line.match(/^(\s*)([-*•])\s*$/);
-      const emptyOrdered = line.match(/^(\s*)(\d+)([.)])\s*$/);
-      const unordered = line.match(/^(\s*)([-*•])\s+.+$/);
-      const ordered = line.match(/^(\s*)(\d+)([.)])\s+.+$/);
-      if (emptyUnordered || emptyOrdered) {
-        event.preventDefault();
-        const start = textarea.selectionStart;
-        const lineStart = start - line.length;
-        const nextValue = `${textarea.value.slice(0, lineStart)}\n${textarea.value.slice(textarea.selectionEnd)}`;
-        const setter = Object.getOwnPropertyDescriptor(
-          HTMLTextAreaElement.prototype,
-          "value",
-        )?.set;
-        setter?.call(textarea, nextValue);
-        textarea.dispatchEvent(new Event("input", { bubbles: true }));
-        requestAnimationFrame(() =>
-          textarea.setSelectionRange(lineStart + 1, lineStart + 1),
-        );
-        return;
-      }
-      if (!unordered && !ordered) return;
-      event.preventDefault();
-      const indent = unordered?.[1] ?? ordered?.[1] ?? "";
-      const prefix = unordered
-        ? `${indent}  ${unordered[2]} `
-        : `${indent}  ${Number(ordered?.[2]) + 1}${ordered?.[3]} `;
-      const start = textarea.selectionStart;
-      const nextValue = `${textarea.value.slice(0, start)}\n${prefix}${textarea.value.slice(textarea.selectionEnd)}`;
-      const setter = Object.getOwnPropertyDescriptor(
-        HTMLTextAreaElement.prototype,
-        "value",
-      )?.set;
-      setter?.call(textarea, nextValue);
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-      requestAnimationFrame(() =>
-        textarea.setSelectionRange(
-          start + prefix.length + 1,
-          start + prefix.length + 1,
-        ),
-      );
-    }
-    document.addEventListener("keydown", continueList);
-    return () => document.removeEventListener("keydown", continueList);
-  }, []);
-  useEffect(() => {
     function closeProfile(event: MouseEvent) {
       const target = event.target;
       if (!(target instanceof Element) || !target.closest(".header-actions"))
@@ -217,6 +163,9 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [fontChoice, setFontChoice] =
     useState<keyof typeof fontOptions>("courier");
+  const noteBodyRef = useRef<HTMLTextAreaElement>(null);
+  const trashRef = useRef<HTMLButtonElement>(null);
+  const [trashHover, setTrashHover] = useState(false);
   useEffect(() => {
     async function load() {
       const savedTheme = window.localStorage.getItem(
@@ -327,9 +276,36 @@ export default function Home() {
         Math.min(82, ((event.clientY - bounds.top) / bounds.height) * 100),
       ),
     };
+    const trashBounds = trashRef.current?.getBoundingClientRect();
+    setTrashHover(Boolean(trashBounds && event.clientX >= trashBounds.left && event.clientX <= trashBounds.right && event.clientY >= trashBounds.top && event.clientY <= trashBounds.bottom));
     const next = { ...positions, [id]: point };
     setPositions(next);
     window.localStorage.setItem("tether-note-positions", JSON.stringify(next));
+  }
+  async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
+    const trashBounds = trashRef.current?.getBoundingClientRect();
+    setDragging(null);
+    setTrashHover(false);
+    if (!trashBounds || event.clientX < trashBounds.left || event.clientX > trashBounds.right || event.clientY < trashBounds.top || event.clientY > trashBounds.bottom) return;
+    if (isSupabaseConfigured && user) {
+      const { error } = await supabase.from("tethers").delete().eq("id", id).eq("user_id", user.id);
+      if (error) return setMessage(error.message);
+    }
+    setNotes((current) => current.filter((note) => note.id !== id));
+  }
+  function insertList(marker: "- " | "1. ") {
+    const textarea = noteBodyRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const needsNewLine = start > 0 && body[start - 1] !== "\n";
+    const insertion = `${needsNewLine ? "\n" : ""}${marker}`;
+    const nextValue = `${body.slice(0, start)}${insertion}${body.slice(end)}`;
+    setBody(nextValue);
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + insertion.length, start + insertion.length);
+    });
   }
   return (
     <main
@@ -508,11 +484,16 @@ export default function Home() {
               />
               <textarea
                 autoFocus
+                ref={noteBodyRef}
                 value={body}
                 onChange={(event) => setBody(event.target.value)}
                 placeholder="Jot it down before it gets away..."
                 rows={5}
               />
+              <div className="list-tools" aria-label="Insert list">
+                <button type="button" onClick={() => insertList("- ")} aria-label="Insert bullet list" title="Insert bullet list">•</button>
+                <button type="button" onClick={() => insertList("1. ")} aria-label="Insert numbered list" title="Insert numbered list">1.</button>
+              </div>
               <div className="capture-footer">
                 <label className="tag-field">
                   <Tag size={14} />
@@ -570,6 +551,7 @@ export default function Home() {
               <span>01</span>
               <h2>Notes</h2>
             </div>
+            <button ref={trashRef} className={`trash-button ${trashHover ? "is-hovered" : ""}`} aria-label="Delete note" title="Drag a note here to delete it"><Trash2 size={17} /><span>Trash</span></button>
             <span className="note-count">{visibleNotes.length} saved</span>
           </div>
           <div className="canvas-intro">
@@ -603,7 +585,7 @@ export default function Home() {
                     onPointerMove={(event) => {
                       if (dragging === note.id) moveNote(event, note.id);
                     }}
-                    onPointerUp={() => setDragging(null)}
+                    onPointerUp={(event) => void dropNote(event, note.id)}
                   >
                     <div className="note-card-top">
                       <div className="note-tags">
