@@ -215,7 +215,7 @@ export default function Home() {
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number; point: Point } | null>(null);
   const dragStartPoint = useRef<Point | null>(null);
-  const resizeRef = useRef<{ id: string; edge: string; startX: number; startY: number; startWidth: number; startHeight: number; startPoint: Point; element: HTMLElement } | null>(null);
+  const resizeRef = useRef<{ id: string; edge: string; startX: number; startY: number; startWidth: number; startHeight: number; minWidth: number; minHeight: number; startPoint: Point; element: HTMLElement } | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
   const trashHoverRef = useRef(false);
   const [trashHover, setTrashHover] = useState(false);
@@ -532,7 +532,14 @@ export default function Home() {
     if (!element || !canvas) return;
     const bounds = element.getBoundingClientRect();
     const canvasBounds = canvas.getBoundingClientRect();
-    resizeRef.current = { id, edge, startX: event.clientX, startY: event.clientY, startWidth: bounds.width, startHeight: bounds.height, startPoint: positions[id] ?? { x: ((bounds.left - canvasBounds.left) / canvasBounds.width) * 100, y: ((bounds.top - canvasBounds.top) / canvasBounds.height) * 100 }, element };
+    const savedWidth = element.style.width;
+    const savedHeight = element.style.height;
+    element.style.removeProperty("width");
+    element.style.removeProperty("height");
+    const naturalBounds = element.getBoundingClientRect();
+    element.style.width = savedWidth;
+    element.style.height = savedHeight;
+    resizeRef.current = { id, edge, startX: event.clientX, startY: event.clientY, startWidth: bounds.width, startHeight: bounds.height, minWidth: Math.max(180, naturalBounds.width), minHeight: Math.max(100, naturalBounds.height), startPoint: positions[id] ?? { x: ((bounds.left - canvasBounds.left) / canvasBounds.width) * 100, y: ((bounds.top - canvasBounds.top) / canvasBounds.height) * 100 }, element };
     event.currentTarget.setPointerCapture(event.pointerId);
   }
   function resizeNote(event: PointerEvent<HTMLElement>) {
@@ -542,8 +549,8 @@ export default function Home() {
     if (!canvas) return;
     const dx = event.clientX - resize.startX;
     const dy = event.clientY - resize.startY;
-    const width = Math.max(180, Math.min(560, resize.startWidth + (resize.edge.includes("e") ? dx : resize.edge.includes("w") ? -dx : 0)));
-    const height = Math.max(100, Math.min(720, resize.startHeight + (resize.edge.includes("s") ? dy : resize.edge.includes("n") ? -dy : 0)));
+    const width = Math.max(resize.minWidth, Math.min(560, resize.startWidth + (resize.edge.includes("e") ? dx : resize.edge.includes("w") ? -dx : 0)));
+    const height = Math.max(resize.minHeight, Math.min(720, resize.startHeight + (resize.edge.includes("s") ? dy : resize.edge.includes("n") ? -dy : 0)));
     const point = { x: resize.startPoint.x + (resize.edge.includes("w") ? ((resize.startWidth - width) / canvas.getBoundingClientRect().width) * 100 : 0), y: resize.startPoint.y + (resize.edge.includes("n") ? ((resize.startHeight - height) / canvas.getBoundingClientRect().height) * 100 : 0) };
     resize.element.style.width = `${width}px`;
     resize.element.style.height = `${height}px`;
