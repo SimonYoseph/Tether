@@ -17,6 +17,7 @@ import { GeistSans } from "geist/font/sans";
 import {
   Check,
   CircleUserRound,
+  CircleAlert,
   Edit3,
   Hash,
   Link2,
@@ -224,6 +225,8 @@ export default function Home() {
   const trashHoverRef = useRef(false);
   const [trashHover, setTrashHover] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmAccountDelete, setConfirmAccountDelete] = useState(false);
+  const [accountDeleting, setAccountDeleting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
@@ -441,6 +444,18 @@ export default function Home() {
     setUser(null);
     setNotes([]);
     setProfileOpen(false);
+    router.replace("/login");
+  }
+  async function deleteAccount() {
+    setAccountDeleting(true);
+    const response = await fetch("/api/account", { method: "DELETE" });
+    if (!response.ok) {
+      const payload = await response.json() as { error?: string };
+      setMessage(payload.error ?? "Unable to delete account.");
+      setAccountDeleting(false);
+      return;
+    }
+    window.localStorage.clear();
     router.replace("/login");
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
@@ -830,6 +845,9 @@ export default function Home() {
               <button className="menu-signout" onClick={() => void signOut()}>
                 <LogOut size={15} /> Sign out
               </button>
+              <button className="menu-delete-account" onClick={() => { setProfileOpen(false); setConfirmAccountDelete(true); }}>
+                <Trash2 size={15} /> Delete account
+              </button>
             </div>
           </div>
         </header>
@@ -1022,6 +1040,7 @@ export default function Home() {
           </div>
         </section>
         {confirmDeleteId && <div className="confirm-backdrop" role="presentation" onMouseDown={cancelDelete}><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="trash-title" onMouseDown={(event) => event.stopPropagation()}><span className="confirm-icon"><Trash2 size={20} /></span><h2 id="trash-title">Move this note to Trash?</h2><p>This note will be removed from your workspace.</p><div className="confirm-actions"><button className="cancel-button" onClick={cancelDelete}>Cancel</button><button className="delete-button" onClick={() => void confirmDelete()}>Move to Trash</button></div></div></div>}
+        {confirmAccountDelete && <div className="confirm-backdrop" role="presentation"><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="account-delete-title"><span className="confirm-icon"><CircleAlert size={20} /></span><h2 id="account-delete-title">Delete your account?</h2><p>This permanently deletes your notes, tags, layouts, and account. This cannot be undone.</p><div className="confirm-actions"><button className="cancel-button" disabled={accountDeleting} onClick={() => setConfirmAccountDelete(false)}>Cancel</button><button className="delete-button" disabled={accountDeleting} onClick={() => void deleteAccount()}>{accountDeleting ? "Deleting..." : "Delete account"}</button></div></div></div>}
         {confirmEditExit && <div className="confirm-backdrop" role="presentation"><div className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-exit-title"><h2 id="edit-exit-title">Save your changes?</h2><p>You changed this note. Save before leaving edit mode?</p><div className="confirm-actions"><button className="cancel-button" onClick={() => setConfirmEditExit(false)}>Keep editing</button><button className="cancel-button" onClick={() => { setEditingId(null); setConfirmEditExit(false); }}>Discard</button><button className="primary-button" onClick={() => void persistEdit()}>Save changes</button></div></div></div>}
         <footer>
           <span>Ideas have somewhere to land.</span>

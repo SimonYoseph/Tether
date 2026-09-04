@@ -48,8 +48,10 @@ button { cursor: pointer; }
 .theme-options button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #c3d5e0; padding: 6px 8px; font: 800 11px var(--ui-font); }
 .theme-options button.selected { border-color: #48aff5; background: #1c5279; color: #fff; }
 .menu-signout { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #ff927b; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.menu-delete-account { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: #ff8f83; padding: 0; font: 800 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .menu-signin { display: flex; align-items: center; gap: 8px; border: 0; border-top: 1px solid #294761; background: transparent; color: #48aff5; padding: 13px 0 0; font: 800 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .menu-row:hover, .menu-signout:hover, .menu-signin:hover { color: #48aff5; }
+.menu-delete-account:hover { color: #ffb0a0; }
 .icon-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; }
 .icon-button:hover, .header-link:hover { color: var(--accent); }
 .header-link { gap: 6px; font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
