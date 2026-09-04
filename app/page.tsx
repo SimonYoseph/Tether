@@ -208,9 +208,10 @@ export default function Home() {
   const [fontChoice, setFontChoice] =
     useState<keyof typeof fontOptions>("courier");
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
-  const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
+  const dragRef = useRef<{ id: string; offsetX: number; offsetY: number; point: Point } | null>(null);
   const dragStartPoint = useRef<Point | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
+  const trashHoverRef = useRef(false);
   const [trashHover, setTrashHover] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -426,17 +427,23 @@ export default function Home() {
     });
     const trashBounds = trashRef.current?.getBoundingClientRect();
     const overlapsTrash = Boolean(trashBounds && projectedBounds.right >= trashBounds.left && projectedBounds.left <= trashBounds.right && projectedBounds.bottom >= trashBounds.top && projectedBounds.top <= trashBounds.bottom);
-    setTrashHover(overlapsTrash);
+    if (trashHoverRef.current !== overlapsTrash) {
+      trashHoverRef.current = overlapsTrash;
+      setTrashHover(overlapsTrash);
+    }
     if (overlapsNote) return;
-    const next = { ...positions, [id]: point };
-    setAndPersistPositions(next);
+    dragRef.current.point = point;
+    event.currentTarget.style.left = `${point.x}%`;
+    event.currentTarget.style.top = `${point.y}%`;
   }
   async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
     const trashBounds = trashRef.current?.getBoundingClientRect();
     const noteBounds = event.currentTarget.getBoundingClientRect();
     const canvasBounds = event.currentTarget.parentElement?.getBoundingClientRect();
+    const drag = dragRef.current;
     setDragging(null);
     dragRef.current = null;
+    trashHoverRef.current = false;
     setTrashHover(false);
     const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
     const releasedAboveCanvas = Boolean(canvasBounds && noteBounds.top < canvasBounds.top);
@@ -446,6 +453,7 @@ export default function Home() {
       return;
     }
     if (!overlapsTrash) {
+      if (drag?.point) setAndPersistPositions({ ...positions, [id]: drag.point });
       dragStartPoint.current = null;
       return;
     }
@@ -474,7 +482,7 @@ export default function Home() {
     const noteBounds = event.currentTarget.getBoundingClientRect();
     const bounds = canvas.getBoundingClientRect();
     dragStartPoint.current = positions[id] ?? { x: ((noteBounds.left - bounds.left) / bounds.width) * 100, y: ((noteBounds.top - bounds.top) / bounds.height) * 100 };
-    dragRef.current = { id, offsetX: event.clientX - noteBounds.left, offsetY: event.clientY - noteBounds.top };
+    dragRef.current = { id, offsetX: event.clientX - noteBounds.left, offsetY: event.clientY - noteBounds.top, point: dragStartPoint.current };
     setDragging(id);
     event.currentTarget.setPointerCapture(event.pointerId);
   }
