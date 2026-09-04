@@ -183,7 +183,6 @@ export default function Home() {
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
   const dragStartPoint = useRef<Point | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
-  const tagToolsRef = useRef<HTMLDivElement>(null);
   const [trashHover, setTrashHover] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -224,11 +223,11 @@ export default function Home() {
   useEffect(() => { function closeView(event: MouseEvent) { const target = event.target; if (!(target instanceof Element) || !target.closest(".view-options-wrap")) setViewOpen(false); } document.addEventListener("mousedown", closeView); return () => document.removeEventListener("mousedown", closeView); }, []);
   useEffect(() => {
     function closeTagPicker(event: MouseEvent) {
-      if (!tagToolsRef.current?.contains(event.target as Node)) {
-        setTagPickerOpen(false);
-        setCustomColorOpen(false);
-        setTagEditorOpen(false);
-      }
+      const target = event.target;
+      if (!(target instanceof Element) || target.closest(".tag-picker-menu, .tag-editor-menu, .tag-picker-trigger, .tag-editor-trigger")) return;
+      setTagPickerOpen(false);
+      setCustomColorOpen(false);
+      setTagEditorOpen(false);
     }
     document.addEventListener("mousedown", closeTagPicker);
     return () => document.removeEventListener("mousedown", closeTagPicker);
@@ -543,12 +542,12 @@ export default function Home() {
               <Plus size={20} />
             </button>
           </div>
-          <div className="tag-tools" ref={tagToolsRef}>
-            <button onClick={() => { setTagPickerOpen(!tagPickerOpen); setCustomColorOpen(false); setTagEditorOpen(false); }} aria-expanded={tagPickerOpen}>
+          <div className="tag-tools">
+            <button className="tag-picker-trigger" onClick={() => { setTagPickerOpen(!tagPickerOpen); setCustomColorOpen(false); setTagEditorOpen(false); }} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
             {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setNewTagColor(color); setNewTagColorHex(color); setCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${customColorOpen ? "selected" : ""}`} aria-label="Choose a custom tag color" aria-expanded={customColorOpen} onClick={() => setCustomColorOpen(!customColorOpen)}><Palette size={13} /></button>{customColorOpen && <div className="custom-color-menu"><label className="tag-color-picker">Color wheel<input type="color" value={newTagColor} onChange={(event) => { setNewTagColor(event.target.value); setNewTagColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={newTagColorHex} onChange={(event) => updateTagColorHex(event.target.value)} placeholder="#48aff5" aria-label="Custom tag color hex" /></div>}</div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
-            <button onClick={() => { setTagEditorOpen(!tagEditorOpen); setTagPickerOpen(false); setCustomColorOpen(false); setSelectedTag(null); }} aria-expanded={tagEditorOpen}>
+            <button className="tag-editor-trigger" onClick={() => { setTagEditorOpen(!tagEditorOpen); setTagPickerOpen(false); setCustomColorOpen(false); setSelectedTag(null); }} aria-expanded={tagEditorOpen}>
               <Edit3 size={15} /> Edit Tags
             </button>
             {tagEditorOpen && <div className="tag-editor-menu"><strong>Edit tags</strong>{visibleTags.length ? <div className="tag-editor-list">{visibleTags.map((tag) => <button type="button" className={selectedTag === tag ? "selected" : ""} key={tag} onClick={() => { setSelectedTag(tag); setTagEditValue(tag); }}><Hash size={12} /> {tag}</button>)}</div> : <span>No tags yet.</span>}{selectedTag && <form className="tag-editor-form" onSubmit={(event) => { event.preventDefault(); void replaceTag(selectedTag, tagEditValue); }}><input value={tagEditValue} onChange={(event) => setTagEditValue(event.target.value)} aria-label="Edit tag name" /><button type="submit">Save</button><button type="button" className="delete-tag-button" onClick={() => void replaceTag(selectedTag)} aria-label="Delete tag"><Trash2 size={13} /></button></form>}</div>}
