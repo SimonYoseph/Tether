@@ -164,6 +164,7 @@ export default function Home() {
   const [fontChoice, setFontChoice] =
     useState<keyof typeof fontOptions>("courier");
   const noteBodyRef = useRef<HTMLTextAreaElement>(null);
+  const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
   const trashRef = useRef<HTMLButtonElement>(null);
   const [trashHover, setTrashHover] = useState(false);
   useEffect(() => {
@@ -263,17 +264,18 @@ export default function Home() {
     }
   }
   function moveNote(event: PointerEvent<HTMLElement>, id: string) {
+    if (dragRef.current?.id !== id) return;
     const canvas = event.currentTarget.parentElement;
     if (!canvas) return;
     const bounds = canvas.getBoundingClientRect();
     const point = {
       x: Math.max(
         0,
-        Math.min(78, ((event.clientX - bounds.left) / bounds.width) * 100),
+        Math.min(78, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
       ),
       y: Math.max(
         0,
-        Math.min(82, ((event.clientY - bounds.top) / bounds.height) * 100),
+        Math.min(82, ((event.clientY - bounds.top - dragRef.current.offsetY) / bounds.height) * 100),
       ),
     };
     const trashBounds = trashRef.current?.getBoundingClientRect();
@@ -285,6 +287,7 @@ export default function Home() {
   async function dropNote(event: PointerEvent<HTMLElement>, id: string) {
     const trashBounds = trashRef.current?.getBoundingClientRect();
     setDragging(null);
+    dragRef.current = null;
     setTrashHover(false);
     if (!trashBounds || event.clientX < trashBounds.left || event.clientX > trashBounds.right || event.clientY < trashBounds.top || event.clientY > trashBounds.bottom) return;
     if (isSupabaseConfigured && user) {
@@ -292,6 +295,14 @@ export default function Home() {
       if (error) return setMessage(error.message);
     }
     setNotes((current) => current.filter((note) => note.id !== id));
+  }
+  function startDragging(event: PointerEvent<HTMLElement>, id: string) {
+    const canvas = event.currentTarget.parentElement;
+    if (!canvas) return;
+    const noteBounds = event.currentTarget.getBoundingClientRect();
+    dragRef.current = { id, offsetX: event.clientX - noteBounds.left, offsetY: event.clientY - noteBounds.top };
+    setDragging(id);
+    event.currentTarget.setPointerCapture(event.pointerId);
   }
   function insertList(marker: "- " | "1. ") {
     const textarea = noteBodyRef.current;
@@ -578,12 +589,9 @@ export default function Home() {
                     className={`note-card ${dragging === note.id ? "is-dragging" : ""}`}
                     key={note.id}
                     style={{ left: `${point.x}%`, top: `${point.y}%` }}
-                    onPointerDown={(event) => {
-                      setDragging(note.id);
-                      event.currentTarget.setPointerCapture(event.pointerId);
-                    }}
+                    onPointerDown={(event) => startDragging(event, note.id)}
                     onPointerMove={(event) => {
-                      if (dragging === note.id) moveNote(event, note.id);
+                      moveNote(event, note.id);
                     }}
                     onPointerUp={(event) => void dropNote(event, note.id)}
                   >
