@@ -281,7 +281,7 @@ export default function Home() {
     if (!userId) return;
     const { data, error } = await supabase
       .from("tethers")
-      .select("id, title, description, tags, outline_color, created_at, updated_at")
+      .select("id, title, description, tags, created_at, updated_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: sortOldest });
     if (!error) setNotes((data as Note[]) ?? []);
