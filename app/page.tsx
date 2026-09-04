@@ -164,6 +164,8 @@ export default function Home() {
   }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authMessage, setAuthMessage] = useState("");
   const [user, setUser] = useState<{ id: string } | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [body, setBody] = useState("");
@@ -294,18 +296,35 @@ export default function Home() {
   }
   async function authenticate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      const signup = await supabase.auth.signUp({ email, password });
-      setMessage(
-        signup.error
-          ? signup.error.message
-          : "Check your email to confirm your account.",
-      );
+    setAuthLoading(true);
+    setAuthMessage("");
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setAuthMessage(error.message);
+    else if (data.user) {
+      setUser(data.user);
+      await loadNotes(data.user.id);
+      setPassword("");
     }
+    setAuthLoading(false);
+  }
+  async function signUp() {
+    setAuthLoading(true);
+    setAuthMessage("");
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) setAuthMessage(error.message);
+    else if (data.session?.user) {
+      setUser(data.session.user);
+      await loadNotes(data.session.user.id);
+      setPassword("");
+    } else setAuthMessage("Check your email to confirm your account, then sign in.");
+    setAuthLoading(false);
+  }
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) return setMessage(error.message);
+    setUser(null);
+    setNotes([]);
+    setProfileOpen(false);
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -621,10 +640,7 @@ export default function Home() {
               </div>
               <button
                 className="menu-signout"
-                onClick={() => {
-                  setProfileOpen(false);
-                  void supabase.auth.signOut();
-                }}
+                onClick={() => void signOut()}
               >
                 <LogOut size={15} /> Sign out
               </button>
@@ -750,7 +766,7 @@ export default function Home() {
             <div className="account-card" id="account">
               <CircleUserRound size={23} />
               <h3>Keep it with you.</h3>
-              <p>Sign in once to save notes across your devices.</p>
+              <p>Sign in to keep your notes available across devices.</p>
               <form onSubmit={authenticate}>
                 <input
                   required
@@ -767,7 +783,11 @@ export default function Home() {
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Password"
                 />
-                <button className="primary-button">Sign in to save</button>
+                <div className="auth-actions">
+                  <button className="primary-button" disabled={authLoading}>{authLoading ? "Signing in..." : "Sign in"}</button>
+                  <button type="button" className="auth-signup" onClick={() => void signUp()} disabled={authLoading}>Create account</button>
+                </div>
+                {authMessage && <p className="auth-message" role="alert">{authMessage}</p>}
               </form>
             </div>
           )}
