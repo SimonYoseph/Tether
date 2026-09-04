@@ -40,6 +40,7 @@ type Note = {
 };
 type Point = { x: number; y: number };
 type Theme = "light" | "charcoal" | "black";
+type TagKeywords = Record<string, string[]>;
 const tagColorPresets = ["#48aff5", "#ff927b", "#f5c85b", "#73d39a", "#b698ff"];
 const fontOptions = {
   courier: '"Courier New", Courier, monospace',
@@ -158,13 +159,20 @@ export default function Home() {
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
   const [tagType, setTagType] = useState<"main" | "sub">("main");
   const [newTag, setNewTag] = useState("");
+  const [newTagKeywords, setNewTagKeywords] = useState("");
   const [newTagColor, setNewTagColor] = useState(tagColorPresets[0]);
   const [newTagColorHex, setNewTagColorHex] = useState(tagColorPresets[0]);
   const [customColorOpen, setCustomColorOpen] = useState(false);
   const [tagEditorOpen, setTagEditorOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [tagEditValue, setTagEditValue] = useState("");
+  const [tagEditType, setTagEditType] = useState<"main" | "sub">("main");
+  const [tagEditColor, setTagEditColor] = useState(tagColorPresets[0]);
+  const [tagEditColorHex, setTagEditColorHex] = useState(tagColorPresets[0]);
+  const [tagEditKeywords, setTagEditKeywords] = useState("");
+  const [editCustomColorOpen, setEditCustomColorOpen] = useState(false);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
+  const [tagKeywords, setTagKeywords] = useState<TagKeywords>({});
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
   const [dragging, setDragging] = useState<string | null>(null);
@@ -201,6 +209,8 @@ export default function Home() {
       setStructured(window.localStorage.getItem("tether-structured-view") === "true");
       const savedTagColors = window.localStorage.getItem("tether-tag-colors");
       if (savedTagColors) setTagColors(JSON.parse(savedTagColors));
+      const savedTagKeywords = window.localStorage.getItem("tether-tag-keywords");
+      if (savedTagKeywords) setTagKeywords(JSON.parse(savedTagKeywords));
       if (!isSupabaseConfigured) {
         setNotes(demoNotes);
         setLoading(false);
@@ -291,14 +301,16 @@ export default function Home() {
       return setMessage(
         user ? "Add Supabase credentials first." : "Sign in to save notes.",
       );
+    const noteTags = applyKeywordTags(
+      tagsInput.split(",").map((tag) => tag.trim()).filter(Boolean),
+      noteTitle(body, title),
+      body,
+    );
     const { error } = await supabase.from("tethers").insert({
       user_id: user.id,
       title: noteTitle(body, title),
       description: body.trim(),
-      tags: tagsInput
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
+      tags: noteTags,
       is_public: false,
       updated_at: new Date().toISOString(),
     });
@@ -320,7 +332,9 @@ export default function Home() {
   async function saveEdit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editingId || !editBody.trim() || !user || !isSupabaseConfigured) return;
-    const { error } = await supabase.from("tethers").update({ title: noteTitle(editBody, editTitle), description: editBody.trim(), tags: editTags.split(",").map((tag) => tag.trim()).filter(Boolean) }).eq("id", editingId).eq("user_id", user.id);
+    const nextTitle = noteTitle(editBody, editTitle);
+    const nextTags = applyKeywordTags(editTags.split(",").map((tag) => tag.trim()).filter(Boolean), nextTitle, editBody);
+    const { error } = await supabase.from("tethers").update({ title: nextTitle, description: editBody.trim(), tags: nextTags }).eq("id", editingId).eq("user_id", user.id);
     if (error) setMessage(error.message); else { setEditingId(null); await loadNotes(user.id); }
   }
   function moveNote(event: PointerEvent<HTMLElement>, id: string) {
@@ -408,14 +422,35 @@ export default function Home() {
       textarea.setSelectionRange(start + insertion.length, start + insertion.length);
     });
   }
-  function addTag() {
+  function applyKeywordTags(currentTags: string[], noteTitleValue: string, noteBody: string, rules = tagKeywords) {
+    const searchableText = `${noteTitleValue} ${noteBody}`.toLowerCase();
+    const matchingTags = Object.entries(rules).flatMap(([tag, keywords]) =>
+      keywords.some((keyword) => searchableText.includes(keyword.toLowerCase())) ? [tag] : [],
+    );
+    return Array.from(new Set([...currentTags, ...matchingTags]));
+  }
+
+  async function addTag() {
     if (!newTag.trim()) return;
     const tag = `${tagType}:${newTag.trim().replace(/\s+/g, "-")}`;
+    const keywords = newTagKeywords.split(",").map((keyword) => keyword.trim()).filter(Boolean);
+    const nextKeywords = { ...tagKeywords, ...(keywords.length ? { [tag]: keywords } : {}) };
     const nextColors = { ...tagColors, [tag]: newTagColor };
     setTagColors(nextColors);
     window.localStorage.setItem("tether-tag-colors", JSON.stringify(nextColors));
+    setTagKeywords(nextKeywords);
+    window.localStorage.setItem("tether-tag-keywords", JSON.stringify(nextKeywords));
+    const updatedNotes = notes.map((note) => ({ ...note, tags: applyKeywordTags(note.tags ?? [], note.title, note.description ?? note.title, nextKeywords) }));
+    const changedNotes = updatedNotes.filter((note, index) => note.tags?.join(",") !== (notes[index].tags ?? []).join(","));
+    if (isSupabaseConfigured && user && changedNotes.length) {
+      const results = await Promise.all(changedNotes.map((note) => supabase.from("tethers").update({ tags: note.tags }).eq("id", note.id).eq("user_id", user.id)));
+      const error = results.find((result) => result.error)?.error;
+      if (error) return setMessage(error.message);
+    }
+    setNotes(updatedNotes);
     setTagsInput((current) => (current ? `${current}, ${tag}` : tag));
     setNewTag("");
+    setNewTagKeywords("");
     setNewTagColor(tagColorPresets[0]);
     setNewTagColorHex(tagColorPresets[0]);
     setCustomColorOpen(false);
@@ -448,8 +483,58 @@ export default function Home() {
       window.localStorage.setItem("tether-tag-colors", JSON.stringify(next));
       return next;
     });
+    setTagKeywords((current) => {
+      const next = { ...current };
+      const keywords = next[currentTag];
+      delete next[currentTag];
+      if (nextTag && keywords) next[nextTag] = keywords;
+      window.localStorage.setItem("tether-tag-keywords", JSON.stringify(next));
+      return next;
+    });
     setSelectedTag(null);
     setTagEditValue("");
+  }
+
+  function beginTagEdit(tag: string) {
+    const [type, ...nameParts] = tag.split(":");
+    setSelectedTag(tag);
+    setTagEditType(type === "sub" ? "sub" : "main");
+    setTagEditValue(nameParts.join(":") || tag);
+    setTagEditColor(tagColors[tag] ?? tagColorPresets[0]);
+    setTagEditColorHex(tagColors[tag] ?? tagColorPresets[0]);
+    setTagEditKeywords((tagKeywords[tag] ?? []).join(", "));
+    setEditCustomColorOpen(false);
+  }
+
+  async function saveTagDetails(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selectedTag || !tagEditValue.trim()) return;
+    const nextTag = `${tagEditType}:${tagEditValue.trim().replace(/\s+/g, "-")}`;
+    const keywords = tagEditKeywords.split(",").map((keyword) => keyword.trim()).filter(Boolean);
+    const nextRules = { ...tagKeywords };
+    delete nextRules[selectedTag];
+    if (keywords.length) nextRules[nextTag] = keywords;
+    const updatedNotes = notes.map((note) => {
+      const renamedTags = (note.tags ?? []).map((tag) => tag === selectedTag ? nextTag : tag);
+      return { ...note, tags: applyKeywordTags(renamedTags, note.title, note.description ?? note.title, nextRules) };
+    });
+    const changedNotes = updatedNotes.filter((note, index) => note.tags?.join(",") !== (notes[index].tags ?? []).join(","));
+    if (isSupabaseConfigured && user && changedNotes.length) {
+      const results = await Promise.all(changedNotes.map((note) => supabase.from("tethers").update({ tags: note.tags }).eq("id", note.id).eq("user_id", user.id)));
+      const error = results.find((result) => result.error)?.error;
+      if (error) return setMessage(error.message);
+    }
+    const nextColors = { ...tagColors };
+    delete nextColors[selectedTag];
+    nextColors[nextTag] = tagEditColor;
+    setNotes(updatedNotes);
+    setTagsInput((current) => current.split(",").map((tag) => tag.trim()).filter(Boolean).map((tag) => tag === selectedTag ? nextTag : tag).join(", "));
+    setTagColors(nextColors);
+    setTagKeywords(nextRules);
+    window.localStorage.setItem("tether-tag-colors", JSON.stringify(nextColors));
+    window.localStorage.setItem("tether-tag-keywords", JSON.stringify(nextRules));
+    setSelectedTag(null);
+    setEditCustomColorOpen(false);
   }
 
   function updateTagColorHex(value: string) {
@@ -546,11 +631,11 @@ export default function Home() {
             <button className="tag-picker-trigger" onClick={() => { setTagPickerOpen(!tagPickerOpen); setCustomColorOpen(false); setTagEditorOpen(false); }} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
-            <div className={`tag-picker-menu ${tagPickerOpen ? "is-open" : ""}`} aria-hidden={!tagPickerOpen}><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setNewTagColor(color); setNewTagColorHex(color); setCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${customColorOpen ? "selected" : ""}`} aria-label="Choose a custom tag color" aria-expanded={customColorOpen} onClick={() => setCustomColorOpen(!customColorOpen)}><Palette size={13} /></button><div className={`custom-color-menu ${customColorOpen ? "is-open" : ""}`} aria-hidden={!customColorOpen}><label className="tag-color-picker">Color wheel<input type="color" value={newTagColor} onChange={(event) => { setNewTagColor(event.target.value); setNewTagColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={newTagColorHex} onChange={(event) => updateTagColorHex(event.target.value)} placeholder="#48aff5" aria-label="Custom tag color hex" /></div></div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>
+            <div className={`tag-picker-menu ${tagPickerOpen ? "is-open" : ""}`} aria-hidden={!tagPickerOpen}><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setNewTagColor(color); setNewTagColorHex(color); setCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${customColorOpen ? "selected" : ""}`} aria-label="Choose a custom tag color" aria-expanded={customColorOpen} onClick={() => setCustomColorOpen(!customColorOpen)}><Palette size={13} /></button><div className={`custom-color-menu ${customColorOpen ? "is-open" : ""}`} aria-hidden={!customColorOpen}><label className="tag-color-picker">Color wheel<input type="color" value={newTagColor} onChange={(event) => { setNewTagColor(event.target.value); setNewTagColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={newTagColorHex} onChange={(event) => updateTagColorHex(event.target.value)} placeholder="#48aff5" aria-label="Custom tag color hex" /></div></div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={() => void addTag()}>Add</button></div><label className="tag-keyword-entry">Keywords<input value={newTagKeywords} onChange={(event) => setNewTagKeywords(event.target.value)} placeholder="e.g. project, launch" /></label></div>
             <button className="tag-editor-trigger" onClick={() => { setTagEditorOpen(!tagEditorOpen); setTagPickerOpen(false); setCustomColorOpen(false); setSelectedTag(null); }} aria-expanded={tagEditorOpen}>
               <Edit3 size={15} /> Edit Tags
             </button>
-            <div className={`tag-editor-menu ${tagEditorOpen ? "is-open" : ""}`} aria-hidden={!tagEditorOpen}><strong>Edit tags</strong>{visibleTags.length ? <div className="tag-editor-list">{visibleTags.map((tag) => <button type="button" className={selectedTag === tag ? "selected" : ""} key={tag} onClick={() => { setSelectedTag(tag); setTagEditValue(tag); }}><Hash size={12} /> {tag}</button>)}</div> : <span>No tags yet.</span>}{selectedTag && <form className="tag-editor-form" onSubmit={(event) => { event.preventDefault(); void replaceTag(selectedTag, tagEditValue); }}><input value={tagEditValue} onChange={(event) => setTagEditValue(event.target.value)} aria-label="Edit tag name" /><button type="submit">Save</button><button type="button" className="delete-tag-button" onClick={() => void replaceTag(selectedTag)} aria-label="Delete tag"><Trash2 size={13} /></button></form>}</div>
+            <div className={`tag-editor-menu ${tagEditorOpen ? "is-open" : ""}`} aria-hidden={!tagEditorOpen}><strong>Edit tags</strong>{visibleTags.length ? <div className="tag-editor-list">{visibleTags.map((tag) => <button type="button" className={selectedTag === tag ? "selected" : ""} key={tag} onClick={() => beginTagEdit(tag)}><Hash size={12} /> {tag}</button>)}</div> : <span>No tags yet.</span>}{selectedTag && <form className="tag-editor-form" onSubmit={saveTagDetails}><div className="tag-type-buttons"><button type="button" className={tagEditType === "main" ? "selected" : ""} onClick={() => setTagEditType("main")}>Main tag</button><button type="button" className={tagEditType === "sub" ? "selected" : ""} onClick={() => setTagEditType("sub")}>Sub tag</button></div><input value={tagEditValue} onChange={(event) => setTagEditValue(event.target.value)} aria-label="Edit tag name" placeholder="Tag name" /><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} edit tag color`} className={tagEditColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setTagEditColor(color); setTagEditColorHex(color); setEditCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${editCustomColorOpen ? "selected" : ""}`} aria-label="Choose a custom edit tag color" aria-expanded={editCustomColorOpen} onClick={() => setEditCustomColorOpen(!editCustomColorOpen)}><Palette size={13} /></button></div><div className={`tag-editor-custom-controls ${editCustomColorOpen ? "is-open" : ""}`}><label className="tag-color-picker">Color wheel<input type="color" value={tagEditColor} onChange={(event) => { setTagEditColor(event.target.value); setTagEditColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={tagEditColorHex} onChange={(event) => { const value = event.target.value.startsWith("#") ? event.target.value : `#${event.target.value}`; if (!/^#[0-9a-fA-F]{0,6}$/.test(value)) return; setTagEditColorHex(value); if (/^#[0-9a-fA-F]{6}$/.test(value)) setTagEditColor(value); }} placeholder="#48aff5" aria-label="Custom edit tag color hex" /></div><label className="tag-keyword-entry">Keywords<input value={tagEditKeywords} onChange={(event) => setTagEditKeywords(event.target.value)} placeholder="e.g. project, launch" /></label><div className="tag-editor-actions"><button type="submit">Save</button><button type="button" className="delete-tag-button" onClick={() => void replaceTag(selectedTag)} aria-label="Delete tag"><Trash2 size={13} /></button></div></form>}</div>
             {visibleTags.map((tag) => (
               <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={12} /> {tag}</span>
             ))}
