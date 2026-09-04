@@ -20,7 +20,6 @@ import {
   CircleAlert,
   Edit3,
   Hash,
-  Link2,
   LoaderCircle,
   LogOut,
   Palette,
@@ -905,16 +904,6 @@ export default function Home() {
             </label>
           </div>
         </section>
-        <div className="connection-strip">
-          <span className="connection-icon">
-            <Link2 size={16} />
-          </span>
-          <div>
-            <strong>Keep your thoughts close</strong>
-            <small>Capture ideas, notes, and links in one quiet place.</small>
-          </div>
-          <span className="connected-state">Connected</span>
-        </div>
         <section
           className={`add-note-panel ${addOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
           aria-hidden={!addOpen}
