@@ -9,7 +9,7 @@
 *::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background-clip: padding-box; background-color: #31506b; }
 *::-webkit-scrollbar-thumb:hover { background-color: #48aff5; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; transition: background .25s ease, color .25s ease; }
+body { margin: 0; background: #06090d; color: var(--ink); font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif; transition: background .25s ease, color .25s ease; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 .app-shell { width: min(1240px, calc(100% - 96px)); max-width: 1240px; min-height: 100vh; margin: auto; padding: 26px 48px 28px; font-family: var(--ui-font); }
@@ -166,7 +166,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .view-menu { top: 48px; right: 0; }
 .note-count { color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .canvas-intro { justify-content: space-between; margin: 15px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
-.notes-canvas { position: relative; min-height: 540px; overflow: visible; }
+.notes-canvas { position: relative; min-height: 540px; overflow: visible; background: inherit; }
 .note-card { position: absolute; width: fit-content; min-width: 180px; max-width: min(420px, 45%); min-height: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 5px 5px 0 color-mix(in srgb, var(--line) 48%, transparent); padding: 20px; touch-action: none; user-select: none; transition: box-shadow .15s ease, transform .15s ease; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: none; box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }

@@ -316,14 +316,27 @@ export default function Home() {
       Array.from(canvas.querySelectorAll<HTMLElement>("[data-note-id]")).forEach((card) => {
         const bounds = card.getBoundingClientRect();
         const overlaps = placed.some((other) => bounds.left < other.right && bounds.right > other.left && bounds.top < other.bottom && bounds.bottom > other.top);
-        if (!overlaps) {
+        const needsCompaction = bounds.top > canvasBounds.top + canvasBounds.height * 0.5;
+        if (!overlaps && !needsCompaction) {
           placed.push(bounds);
           return;
         }
-        const top = Math.max(...placed.map((other) => other.bottom)) + 20;
-        const point = { x: ((bounds.left - canvasBounds.left) / canvasBounds.width) * 100, y: ((top - canvasBounds.top) / canvasBounds.height) * 100 };
+        let point: Point | undefined;
+        for (let top = 4; top <= 82 && !point; top += 8) {
+          for (const left of [4, 36, 68]) {
+            const candidate = { left: canvasBounds.left + (left / 100) * canvasBounds.width, top: canvasBounds.top + (top / 100) * canvasBounds.height, right: canvasBounds.left + (left / 100) * canvasBounds.width + bounds.width, bottom: canvasBounds.top + (top / 100) * canvasBounds.height + bounds.height };
+            if (candidate.right > canvasBounds.right || placed.some((other) => candidate.left < other.right && candidate.right > other.left && candidate.top < other.bottom && candidate.bottom > other.top)) continue;
+            point = { x: left, y: top };
+            placed.push(candidate as DOMRect);
+            break;
+          }
+        }
+        if (!point) {
+          const top = Math.max(...placed.map((other) => other.bottom)) + 20;
+          point = { x: 4, y: ((top - canvasBounds.top) / canvasBounds.height) * 100 };
+          placed.push({ left: canvasBounds.left + (point.x / 100) * canvasBounds.width, top, right: canvasBounds.left + (point.x / 100) * canvasBounds.width + bounds.width, bottom: top + bounds.height } as DOMRect);
+        }
         nextPositions[card.dataset.noteId!] = point;
-        placed.push({ left: bounds.left, top, right: bounds.right, bottom: top + bounds.height } as DOMRect);
         changed = true;
       });
       if (changed) {
