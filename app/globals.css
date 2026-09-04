@@ -223,3 +223,6 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 :root[data-theme="light"] .global-search input, :root[data-theme="light"] .capture-form input, :root[data-theme="light"] .capture-form textarea { color: #283746; }
 footer { margin-top: 30px; color: #5f7483; }
 @media (max-width: 760px) { .side-rail { width: 54px; min-width: 54px; } .rail-logo { width: 34px; height: 34px; } .rail-add { font-size: 9px; } .dashboard { width: calc(100% - 32px); padding: 18px 0 24px; } .brand-wordmark { font-size: 24px; } .connection-strip { align-items: flex-start; } .connection-strip .connected-state { display: none; } .subheader-line { font-size: 11px; } .notes-canvas { min-height: 620px; } .note-card { width: min(220px, 76%); } }
+
+.dashboard > *:not(.site-header), .dashboard > *:not(.site-header) * { font-family: "Courier New", Courier, monospace; font-weight: 700; }
+.font-picker { display: none; }
