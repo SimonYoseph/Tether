@@ -72,8 +72,8 @@ kbd { border: 1px solid var(--line); padding: 2px 5px; color: var(--muted); font
 .add-note-heading h2 { margin: 8px 0 0; font-size: 24px; font-weight: 400; }
 .add-note-heading h2 { display: none; }
 .section-label-text { color: var(--accent); font: 700 10px Arial, sans-serif; letter-spacing: .12em; }
-.close-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted); }
-.close-button:hover { color: var(--accent); }
+.close-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: #ff6f61; }
+.close-button:hover { border-color: #ff6f61; background: rgba(255, 111, 97, .12); color: #ff8f83; }
 .add-note-panel .capture-form { margin-top: 20px; border: 0; }
 .add-note-panel .capture-form > input, .add-note-panel .capture-form textarea { border-bottom: 0; }
 .add-note-panel .capture-footer { border-top: 1px solid var(--line); }
