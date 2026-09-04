@@ -158,6 +158,7 @@ export default function Home() {
   const [addOpen, setAddOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [compact, setCompact] = useState(false);
+  const [structured, setStructured] = useState(false);
   const [sortOldest, setSortOldest] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -178,6 +179,7 @@ export default function Home() {
         setTheme(savedTheme);
         document.documentElement.dataset.theme = savedTheme;
       }
+      setStructured(window.localStorage.getItem("tether-structured-view") === "true");
       if (!isSupabaseConfigured) {
         setNotes(demoNotes);
         setLoading(false);
@@ -222,6 +224,13 @@ export default function Home() {
     setTheme(nextTheme);
     document.documentElement.dataset.theme = nextTheme;
     window.localStorage.setItem("tether-theme", nextTheme);
+  }
+  function toggleStructured() {
+    setStructured((current) => {
+      const next = !current;
+      window.localStorage.setItem("tether-structured-view", String(next));
+      return next;
+    });
   }
   async function authenticate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -344,7 +353,7 @@ export default function Home() {
   }
   return (
     <main
-      className={`app-shell ${compact ? "compact-view" : ""}`}
+      className={`app-shell ${compact ? "compact-view" : ""} ${structured ? "structured-view" : ""}`}
       style={{ "--ui-font": fontOptions[fontChoice] } as CSSProperties}
     >
       <div className="dashboard">
@@ -391,6 +400,11 @@ export default function Home() {
                   checked={compact}
                   onChange={(event) => setCompact(event.target.checked)}
                 />
+                <i />
+              </label>
+              <label className="menu-toggle">
+                <span>Structured view</span>
+                <input type="checkbox" checked={structured} onChange={toggleStructured} />
                 <i />
               </label>
               <button
