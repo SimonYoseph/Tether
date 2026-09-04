@@ -270,10 +270,12 @@ export default function Home() {
     const canvas = event.currentTarget.parentElement;
     if (!canvas) return;
     const bounds = canvas.getBoundingClientRect();
+    const noteBounds = event.currentTarget.getBoundingClientRect();
+    const horizontalPadding = (noteBounds.width / bounds.width) * 100;
     const point = {
       x: Math.max(
-        -20,
-        Math.min(100, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
+        0,
+        Math.min(100 - horizontalPadding, ((event.clientX - bounds.left - dragRef.current.offsetX) / bounds.width) * 100),
       ),
       y: Math.max(
         -20,
@@ -281,7 +283,6 @@ export default function Home() {
       ),
     };
     const trashBounds = trashRef.current?.getBoundingClientRect();
-    const noteBounds = event.currentTarget.getBoundingClientRect();
     const overlapsTrash = Boolean(trashBounds && noteBounds.right >= trashBounds.left && noteBounds.left <= trashBounds.right && noteBounds.bottom >= trashBounds.top && noteBounds.top <= trashBounds.bottom);
     setTrashHover(overlapsTrash);
     const next = { ...positions, [id]: point };
