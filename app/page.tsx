@@ -19,6 +19,7 @@ import {
   Hash,
   Link2,
   LoaderCircle,
+  LogIn,
   LogOut,
   Palette,
   Plus,
@@ -638,12 +639,15 @@ export default function Home() {
                   <button className={theme === "black" ? "selected" : ""} onClick={() => chooseTheme("black")}>Black</button>
                 </div>
               </div>
-              <button
-                className="menu-signout"
-                onClick={() => void signOut()}
-              >
-                <LogOut size={15} /> Sign out
-              </button>
+              {user ? (
+                <button className="menu-signout" onClick={() => void signOut()}>
+                  <LogOut size={15} /> Sign out
+                </button>
+              ) : (
+                <button className="menu-signin" onClick={() => { setProfileOpen(false); setAddOpen(true); }}>
+                  <LogIn size={15} /> Sign in
+                </button>
+              )}
             </div>
           </div>
         </header>
