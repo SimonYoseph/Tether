@@ -17,7 +17,7 @@ button { cursor: pointer; }
 .site-header { justify-content: space-between; padding-bottom: 20px; }
 .brand { display: flex; align-items: center; gap: 13px; color: var(--ink); text-decoration: none; }
 .brand-logo { width: 60px; height: 60px; border: 2px solid var(--ink); border-radius: 50%; object-fit: cover; box-shadow: 3px 3px 0 var(--accent); }
-.brand-wordmark { display: flex; flex-direction: column; color: #d9e9f2; font: 400 34px/0.9 Herculanum, "Rockwell Extra Bold", Rockwell, Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; letter-spacing: .06em; -webkit-text-stroke: .35px #0b141d; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .16), 0 5px 10px rgba(0, 0, 0, .28); }
+.brand-wordmark { display: flex; flex-direction: column; color: #d9e9f2; font: 900 32px/0.9 "Rockwell Extra Bold", Rockwell, Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; letter-spacing: .08em; -webkit-text-stroke: .7px #071019; text-shadow: 1px 1px 0 #071019, 3px 3px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .12), 0 5px 10px rgba(0, 0, 0, .32); }
 .header-actions { gap: 18px; }
 .icon-button, .header-link, .note-close { border: 0; background: transparent; color: var(--muted); }
 .profile-button { position: relative; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #d6edfc; }
@@ -337,7 +337,7 @@ footer { margin-top: 30px; color: #5f7483; }
 :root[data-theme="light"] .connection-strip small { color: #526a79; }
 :root[data-theme="light"] .add-note-panel .capture-form > input, :root[data-theme="light"] .add-note-panel .capture-form textarea { color: #283746; }
 .tag-chip { font-weight: 800 !important; }
-.brand-wordmark { -webkit-text-stroke: .35px #0b141d; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .16), 0 5px 10px rgba(0, 0, 0, .28); }
+.brand-wordmark { -webkit-text-stroke: .7px #071019; text-shadow: 1px 1px 0 #071019, 3px 3px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .12), 0 5px 10px rgba(0, 0, 0, .32); }
 .login-page { display: grid; min-height: 100vh; place-items: center; background: #06090d; color: #edf3f7; padding: 24px; }
 .login-panel { width: min(100%, 390px); border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 12px 12px 0 rgba(0, 0, 0, .2); padding: 32px; }
 .login-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid #31506b; border-radius: 50%; background: #172a3d; color: #48aff5; }
