@@ -158,6 +158,7 @@ export default function Home() {
   const [tagType, setTagType] = useState<"main" | "sub">("main");
   const [newTag, setNewTag] = useState("");
   const [newTagColor, setNewTagColor] = useState(tagColorPresets[0]);
+  const [newTagColorHex, setNewTagColorHex] = useState(tagColorPresets[0]);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [positions, setPositions] = useState<Record<string, Point>>({});
@@ -400,8 +401,16 @@ export default function Home() {
     setTagsInput((current) => (current ? `${current}, ${tag}` : tag));
     setNewTag("");
     setNewTagColor(tagColorPresets[0]);
+    setNewTagColorHex(tagColorPresets[0]);
     setTagPickerOpen(false);
     setAddOpen(true);
+  }
+
+  function updateTagColorHex(value: string) {
+    const normalized = value.startsWith("#") ? value : `#${value}`;
+    if (!/^#[0-9a-fA-F]{0,6}$/.test(normalized)) return;
+    setNewTagColorHex(normalized);
+    if (/^#[0-9a-fA-F]{6}$/.test(normalized)) setNewTagColor(normalized);
   }
   return (
     <main
@@ -491,7 +500,7 @@ export default function Home() {
             <button onClick={() => setTagPickerOpen(!tagPickerOpen)} aria-expanded={tagPickerOpen}>
               <Tag size={15} /> Add Tag
             </button>
-            {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><label className="tag-color-picker">Tag color<input type="color" value={newTagColor} onChange={(event) => setNewTagColor(event.target.value)} /></label><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => setNewTagColor(color)} />)}</div><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
+            {tagPickerOpen && <div className="tag-picker-menu"><strong>Choose tag type</strong><div className="tag-type-buttons"><button type="button" className={tagType === "main" ? "selected" : ""} onClick={() => setTagType("main")}>Main tag</button><button type="button" className={tagType === "sub" ? "selected" : ""} onClick={() => setTagType("sub")}>Sub tag</button></div><label className="tag-color-picker">Tag color<input type="color" value={newTagColor} onChange={(event) => { setNewTagColor(event.target.value); setNewTagColorHex(event.target.value); }} /></label><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} tag color`} className={newTagColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setNewTagColor(color); setNewTagColorHex(color); }} />)}</div><input className="tag-color-hex" value={newTagColorHex} onChange={(event) => updateTagColorHex(event.target.value)} placeholder="#48aff5" aria-label="Custom tag color hex" /><div className="tag-entry"><input autoFocus value={newTag} onChange={(event) => setNewTag(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addTag(); }} placeholder={`${tagType} tag`} /><button type="button" onClick={addTag}>Add</button></div></div>}
             <button>
               <Edit3 size={15} /> Edit Tags
             </button>
