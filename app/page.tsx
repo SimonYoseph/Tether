@@ -798,12 +798,13 @@ export default function Home() {
                 const point =
                   positions[note.id] ??
                   defaultPoints[index % defaultPoints.length];
+                const noteTagColor = note.tags?.map((tag) => tagColors[tag]).find(Boolean);
                 return (
                   <article
-                    className={`note-card ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
+                    className={`note-card ${noteTagColor ? "has-tag-color" : ""} ${dragging === note.id ? "is-dragging" : ""} ${dragging === note.id && trashHover ? "is-trash-hover" : ""}`}
                     key={note.id}
                     data-note-id={note.id}
-                    style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                    style={{ left: `${point.x}%`, top: `${point.y}%`, "--note-card-tag-color": noteTagColor } as CSSProperties}
                     onPointerDown={(event) => startDragging(event, note.id)}
                     onPointerMove={(event) => {
                       moveNote(event, note.id);

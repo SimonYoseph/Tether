@@ -162,6 +162,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card { position: absolute; width: min(240px, 45%); min-height: 118px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 5px 5px 0 color-mix(in srgb, var(--line) 48%, transparent); padding: 14px; touch-action: none; user-select: none; transition: box-shadow .15s ease, transform .15s ease; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: none; box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+.note-card.has-tag-color:not(.is-trash-hover) { border-color: var(--note-card-tag-color) !important; }
 .note-card-top, .note-tags { display: flex; align-items: center; }
 .note-card-top { justify-content: space-between; gap: 8px; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }
