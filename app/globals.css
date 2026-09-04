@@ -195,8 +195,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .compact-view .note-card { min-height: 82px; padding: 11px; }
 .compact-view .note-card > p { margin: 10px 0 2px; font-size: 13px; }
 .compact-view .note-times { display: none; }
-.structured-view .notes-canvas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; min-height: 540px; align-content: start; }
-.structured-view .note-card { position: relative; top: auto !important; left: auto !important; width: auto; min-height: 150px; transform: none !important; }
+.structured-view .notes-canvas { display: grid; grid-template-columns: repeat(auto-fill, 240px); gap: 16px; min-height: 540px; align-content: start; }
+.structured-view .note-card { position: relative; top: auto !important; left: auto !important; width: 240px; min-height: 118px; transform: none !important; }
 .structured-view .note-card:hover { transform: translateY(-2px) !important; }
 .structured-view .empty { grid-column: 1 / -1; }
 .section-label { border: 0; padding-top: 0; }
@@ -254,7 +254,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 :root[data-theme="light"] .section-label h2, :root[data-theme="light"] .note-card > p, :root[data-theme="light"] .brand-wordmark { color: #283746; }
 :root[data-theme="light"] .global-search input, :root[data-theme="light"] .capture-form input, :root[data-theme="light"] .capture-form textarea { color: #283746; }
 footer { margin-top: 30px; color: #5f7483; }
-@media (max-width: 760px) { .side-rail { width: 54px; min-width: 54px; } .rail-logo { width: 34px; height: 34px; } .rail-add { font-size: 9px; } .dashboard { width: calc(100% - 32px); padding: 18px 0 24px; } .brand-wordmark { font-size: 24px; } .connection-strip { align-items: flex-start; } .connection-strip .connected-state { display: none; } .subheader-line { font-size: 11px; } .notes-canvas { min-height: 620px; } .note-card { width: min(220px, 76%); } .structured-view .notes-canvas { grid-template-columns: 1fr; } .structured-view .note-card { width: 100%; } }
+@media (max-width: 760px) { .side-rail { width: 54px; min-width: 54px; } .rail-logo { width: 34px; height: 34px; } .rail-add { font-size: 9px; } .dashboard { width: calc(100% - 32px); padding: 18px 0 24px; } .brand-wordmark { font-size: 24px; } .connection-strip { align-items: flex-start; } .connection-strip .connected-state { display: none; } .subheader-line { font-size: 11px; } .notes-canvas { min-height: 620px; } .note-card { width: min(220px, 76%); } .structured-view .notes-canvas { grid-template-columns: 1fr; } .structured-view .note-card { width: min(220px, 76%); } }
 
 .dashboard > *:not(.site-header), .dashboard > *:not(.site-header) * { font-family: "Courier New", Courier, monospace; font-weight: 700; }
 .font-picker { display: none; }
