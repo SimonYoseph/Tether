@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { GeistSans } from "geist/font/sans";
 import {
   Check,
   CircleUserRound,
@@ -600,7 +601,7 @@ export default function Home() {
               height={60}
               priority
             />
-            <span className="brand-wordmark">TETHER</span>
+            <span className={`${GeistSans.className} brand-wordmark`}>TETHER</span>
           </Link>
           <div className="header-actions">
             <button
