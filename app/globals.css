@@ -123,6 +123,7 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card:hover .note-close { display: block; }
 .empty { display: flex; height: 520px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font: 13px Arial, sans-serif; text-align: center; }
 .empty p { margin: 5px 0 0; color: var(--ink); font: 22px Georgia, serif; }
+.empty span { display: none; }
 .spin { animation: spin 1s linear infinite; }
 .audience-strip { display: flex; justify-content: space-between; gap: 30px; margin-top: 105px; border-top: 1px solid var(--line); padding: 32px 0; }
 .audience-strip strong { font-size: 24px; font-weight: 400; letter-spacing: -.04em; line-height: 1; }
