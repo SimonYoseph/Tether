@@ -194,6 +194,7 @@ export default function Home() {
   const [dragging, setDragging] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>("black");
   const [addOpen, setAddOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -305,6 +306,7 @@ export default function Home() {
       setUser(data.user);
       await loadNotes(data.user.id);
       setPassword("");
+      setAuthOpen(false);
     }
     setAuthLoading(false);
   }
@@ -317,6 +319,7 @@ export default function Home() {
       setUser(data.session.user);
       await loadNotes(data.session.user.id);
       setPassword("");
+      setAuthOpen(false);
     } else setAuthMessage("Check your email to confirm your account, then sign in.");
     setAuthLoading(false);
   }
@@ -325,6 +328,7 @@ export default function Home() {
     if (error) return setMessage(error.message);
     setUser(null);
     setNotes([]);
+    setAuthOpen(false);
     setProfileOpen(false);
   }
   async function saveNote(event: FormEvent<HTMLFormElement>) {
@@ -644,7 +648,7 @@ export default function Home() {
                   <LogOut size={15} /> Sign out
                 </button>
               ) : (
-                <button className="menu-signin" onClick={() => { setProfileOpen(false); setAddOpen(true); }}>
+                <button className="menu-signin" onClick={() => { setProfileOpen(false); setAuthOpen(true); }}>
                   <LogIn size={15} /> Sign in
                 </button>
               )}
@@ -668,7 +672,7 @@ export default function Home() {
             </div>
             <button
               className="add-note-button"
-              onClick={() => setAddOpen(!addOpen)}
+              onClick={() => user ? setAddOpen(!addOpen) : setAuthOpen(true)}
               aria-label="Add a note"
               title="Add a note"
             >
@@ -716,12 +720,12 @@ export default function Home() {
           <span className="connected-state">Connected</span>
         </div>
         <section
-          className={`add-note-panel ${addOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
-          aria-hidden={!addOpen}
+          className={`add-note-panel ${addOpen || authOpen ? "is-open" : ""} ${body.trim().length > 80 ? "has-content" : ""}`}
+          aria-hidden={!addOpen && !authOpen}
         >
-          <div className="add-note-heading">
+          {user && <div className="add-note-heading">
             <span className="section-label-text">NEW NOTE</span>
-          </div>
+          </div>}
           {user ? (
             <form className="capture-form" onSubmit={saveNote}>
               <input
@@ -768,6 +772,7 @@ export default function Home() {
             </form>
           ) : (
             <div className="account-card" id="account">
+              <button type="button" className="close-button" onClick={() => setAuthOpen(false)} aria-label="Close sign in panel"><X size={18} /></button>
               <CircleUserRound size={23} />
               <h3>Keep it with you.</h3>
               <p>Sign in to keep your notes available across devices.</p>
