@@ -77,7 +77,7 @@ const demoNotes: Note[] = [
   },
 ];
 function initialNotePoint(index: number, total: number): Point {
-  return { x: 4, y: 4 + (index * 88) / Math.max(total, 1) };
+  return { x: 4, y: 4 + (index * 92) / Math.max(total, 1) };
 }
 function notePositionsKey(userId?: string) {
   return `tether-note-positions-${userId ?? "guest"}`;
@@ -273,6 +273,35 @@ export default function Home() {
     document.addEventListener("mousedown", closeTagPicker);
     return () => document.removeEventListener("mousedown", closeTagPicker);
   }, []);
+  useEffect(() => {
+    if (structured || !notes.length) return;
+    const timer = window.setTimeout(() => {
+      const canvas = document.querySelector<HTMLElement>(".notes-canvas");
+      if (!canvas) return;
+      const canvasBounds = canvas.getBoundingClientRect();
+      const nextPositions = { ...positions };
+      const placed: DOMRect[] = [];
+      let changed = false;
+      Array.from(canvas.querySelectorAll<HTMLElement>("[data-note-id]")).forEach((card) => {
+        const bounds = card.getBoundingClientRect();
+        const overlaps = placed.some((other) => bounds.left < other.right && bounds.right > other.left && bounds.top < other.bottom && bounds.bottom > other.top);
+        if (!overlaps) {
+          placed.push(bounds);
+          return;
+        }
+        const top = Math.max(...placed.map((other) => other.bottom)) + 20;
+        const point = { x: ((bounds.left - canvasBounds.left) / canvasBounds.width) * 100, y: ((top - canvasBounds.top) / canvasBounds.height) * 100 };
+        nextPositions[card.dataset.noteId!] = point;
+        placed.push({ left: bounds.left, top, right: bounds.right, bottom: top + bounds.height } as DOMRect);
+        changed = true;
+      });
+      if (changed) {
+        setPositions(nextPositions);
+        window.localStorage.setItem(notePositionsKey(user?.id), JSON.stringify(nextPositions));
+      }
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [notes, positions, structured, user?.id]);
   async function loadNotes(userId?: string) {
     if (!userId) return;
     const { data, error } = await supabase
@@ -793,7 +822,7 @@ export default function Home() {
             <span>Drag notes anywhere <i className="hint-divider" /> <b className="note-count">{visibleNotes.length} saved</b></span>
             <span>{sortOldest ? "Oldest first" : "Newest first"}</span>
           </div>
-          <div className="notes-canvas" style={{ minHeight: `${Math.max(540, visibleNotes.length * 340)}px` }}>
+          <div className="notes-canvas" style={{ minHeight: `${Math.max(540, visibleNotes.length * 560)}px` }}>
             {loading ? (
               <div className="empty">
                 <LoaderCircle className="spin" size={20} /> Loading...
