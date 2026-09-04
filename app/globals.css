@@ -202,6 +202,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 :root[data-theme="light"] .menu-toggle, :root[data-theme="light"] .menu-row, :root[data-theme="light"] .theme-options { color: #283746; }
 :root[data-theme="light"] .theme-options button { border-color: #b9c6d0; color: #687989; }
 :root[data-theme="light"] .theme-options button.selected { border-color: #1685d2; background: #d9e9f4; color: #283746; }
+:root[data-theme="black"] .brand-wordmark, :root[data-theme="charcoal"] .brand-wordmark { color: #ffffff; }
+:root[data-theme="light"] .brand-wordmark { color: #283746; }
 .note-card { border: 1px solid #294761; border-radius: 8px; background: #151f29; box-shadow: 0 10px 24px rgba(0, 0, 0, .22); }
 .note-card:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, .36); }
 .note-card.is-dragging { box-shadow: 0 15px 35px rgba(0, 0, 0, .5); }
