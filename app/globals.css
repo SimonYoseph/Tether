@@ -171,7 +171,15 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 color-mix(in srgb, var(--accent) 45%, transparent); }
 .note-card.is-dragging { z-index: 5; cursor: grabbing; transform: none; box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
 .note-card.has-tag-color:not(.is-trash-hover) { border-color: var(--note-card-tag-color) !important; }
-.note-edit-form { position: static; }
+.note-edit-form { position: static; display: grid; gap: 10px; margin-top: 16px; }
+.note-edit-title, .note-edit-body, .note-edit-tags input { width: 100%; border: 0; background: transparent; color: inherit; outline: 0; padding: 0; font-family: var(--ui-font); }
+.note-edit-title { font-size: 19px; font-weight: 800; line-height: 1.25; }
+.note-edit-body { min-height: 100px; resize: none; font-size: 15px; line-height: 1.5; }
+.note-edit-tags { display: flex; align-items: center; gap: 7px; border-top: 1px solid #294761; padding-top: 10px; color: #8fa6b5; }
+.note-edit-tags input { min-width: 0; font-size: 11px; }
+.note-edit-title:focus, .note-edit-body:focus, .note-edit-tags:focus-within { box-shadow: inset 0 -1px 0 #48aff5; }
+.note-edit-actions { display: flex; justify-content: flex-end; gap: 7px; padding-top: 2px; }
+.note-edit-actions .cancel-button, .note-edit-actions .primary-button { padding: 8px 10px; }
 .note-resize-handles { position: absolute; inset: -19px; pointer-events: none; }
 .resize-handle { position: absolute; display: block; border: 0; padding: 0; pointer-events: auto; }
 .resize-n, .resize-s { right: 10px; left: 10px; height: 8px; cursor: ns-resize; }
