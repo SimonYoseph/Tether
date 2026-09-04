@@ -76,16 +76,19 @@ button { cursor: pointer; }
 .tag-color-presets button.selected { border-color: #fff; box-shadow: 0 0 0 1px #48aff5; }
 .tag-color-presets .custom-color-button { display: grid; place-items: center; border-color: #dce5eb; background: conic-gradient(#ff5b5b, #f6d45b, #61d98c, #4cc5f5, #9e7aff, #ff5b5b); color: #111b25; }
 .tag-color-presets .custom-color-button.selected { color: #fff; }
-.custom-color-menu { position: absolute; top: 82px; left: 13px; display: grid; width: 214px; gap: 9px; border: 1px solid #31506b; border-radius: 6px; background: #172a3d; box-shadow: 0 12px 26px rgba(0, 0, 0, .35); padding: 10px; }
+.custom-color-menu { position: absolute; top: 82px; left: 13px; display: grid; width: 214px; max-height: 0; gap: 9px; overflow: hidden; border: 1px solid transparent; border-radius: 6px; background: #172a3d; box-shadow: 0 12px 26px rgba(0, 0, 0, .35); opacity: 0; padding: 0 10px; pointer-events: none; transform: translateY(-6px) scaleY(.96); transform-origin: top; transition: max-height .3s cubic-bezier(.22, 1, .36, 1), opacity .2s ease, padding .3s cubic-bezier(.22, 1, .36, 1), transform .3s cubic-bezier(.22, 1, .36, 1), border-color .2s ease; }
+.custom-color-menu.is-open { max-height: 100px; border-color: #31506b; opacity: 1; padding: 10px; pointer-events: auto; transform: translateY(0) scaleY(1); }
 .tag-color-hex { min-width: 0; border: 1px solid #31506b; border-radius: 5px; background: #111b25; color: #edf3f7; outline: 0; padding: 7px 8px; font: 11px var(--ui-font); }
 .tag-tools { position: relative; }
-.tag-picker-menu { position: absolute; z-index: 25; top: 38px; left: 0; display: grid; width: 240px; gap: 10px; border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); padding: 13px; color: #dfeaf0; }
+.tag-picker-menu, .tag-editor-menu { position: absolute; z-index: 25; top: 38px; display: grid; width: 240px; max-height: 0; gap: 10px; overflow: hidden; border: 1px solid transparent; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); color: #dfeaf0; opacity: 0; padding: 0 13px; pointer-events: none; transform: translateY(-8px) scaleY(.97); transform-origin: top; transition: max-height .4s cubic-bezier(.22, 1, .36, 1), opacity .25s ease, padding .4s cubic-bezier(.22, 1, .36, 1), transform .4s cubic-bezier(.22, 1, .36, 1), border-color .2s ease; }
+.tag-picker-menu { left: 0; }
+.tag-picker-menu.is-open, .tag-editor-menu.is-open { max-height: 390px; border-color: #294761; opacity: 1; padding: 13px; pointer-events: auto; transform: translateY(0) scaleY(1); }
 .tag-picker-menu strong { font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .tag-type-buttons, .tag-entry { display: flex; gap: 6px; }
 .tag-type-buttons button, .tag-entry button { border: 1px solid #31506b; border-radius: 5px; background: transparent; color: #9eb4c4; padding: 7px 8px; font: 10px var(--ui-font); }
 .tag-type-buttons button.selected, .tag-type-buttons button:hover, .tag-entry button:hover { border-color: #48aff5; color: #fff; }
 .tag-entry input { min-width: 0; flex: 1; border: 1px solid #31506b; border-radius: 5px; background: #172a3d; color: #edf3f7; outline: 0; padding: 7px 8px; font: 11px var(--ui-font); }
-.tag-editor-menu { position: absolute; z-index: 25; top: 38px; left: 86px; display: grid; width: 240px; gap: 10px; border: 1px solid #294761; border-radius: 8px; background: #111b25; box-shadow: 0 16px 35px rgba(0, 0, 0, .35); padding: 13px; color: #dfeaf0; }
+.tag-editor-menu { left: 86px; }
 .tag-editor-menu strong, .tag-editor-menu > span { font: 700 10px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .tag-editor-list { display: grid; max-height: 145px; overflow-y: auto; gap: 5px; }
 .tag-editor-list button { justify-content: flex-start; border: 1px solid transparent; color: #9eb4c4; padding: 6px 7px; text-transform: none; }
