@@ -92,6 +92,19 @@ function formatDateTime(value: string) {
     minute: "2-digit",
   });
 }
+function tagChipStyle(color?: string): CSSProperties {
+  if (!color) return { borderColor: "#294761" };
+  const hex = color.replace("#", "");
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+  return {
+    borderColor: color,
+    color: luminance < 0.42 ? "#f5f9fc" : color,
+    backgroundColor: `color-mix(in srgb, ${color} 18%, #172a3d)`,
+  };
+}
 function renderNoteContent(text: string): ReactNode[] {
   const lines = text.split("\n");
   const content: ReactNode[] = [];
@@ -652,7 +665,7 @@ export default function Home() {
             </button>
             <div className={`tag-editor-menu ${tagEditorOpen ? "is-open" : ""}`} aria-hidden={!tagEditorOpen}><strong>Edit tags</strong>{visibleTags.length ? <div className="tag-editor-list">{visibleTags.map((tag) => <button type="button" className={selectedTag === tag ? "selected" : ""} key={tag} onClick={() => beginTagEdit(tag)}><Hash size={12} /> {tag}</button>)}</div> : <span>No tags yet.</span>}{selectedTag && <form className="tag-editor-form" onSubmit={saveTagDetails}><div className="tag-type-buttons"><button type="button" className={tagEditType === "main" ? "selected" : ""} onClick={() => setTagEditType("main")}>Main tag</button><button type="button" className={tagEditType === "sub" ? "selected" : ""} onClick={() => setTagEditType("sub")}>Sub tag</button></div><input value={tagEditValue} onChange={(event) => setTagEditValue(event.target.value)} aria-label="Edit tag name" placeholder="Tag name" /><div className="tag-color-presets">{tagColorPresets.map((color) => <button type="button" key={color} aria-label={`Use ${color} edit tag color`} className={tagEditColor === color ? "selected" : ""} style={{ backgroundColor: color }} onClick={() => { setTagEditColor(color); setTagEditColorHex(color); setEditCustomColorOpen(false); }} />)}<button type="button" className={`custom-color-button ${editCustomColorOpen ? "selected" : ""}`} aria-label="Choose a custom edit tag color" aria-expanded={editCustomColorOpen} onClick={() => setEditCustomColorOpen(!editCustomColorOpen)}><Palette size={13} /></button></div><div className={`tag-editor-custom-controls ${editCustomColorOpen ? "is-open" : ""}`}><label className="tag-color-picker">Color wheel<input type="color" value={tagEditColor} onChange={(event) => { setTagEditColor(event.target.value); setTagEditColorHex(event.target.value); }} /></label><input className="tag-color-hex" value={tagEditColorHex} onChange={(event) => { const value = event.target.value.startsWith("#") ? event.target.value : `#${event.target.value}`; if (!/^#[0-9a-fA-F]{0,6}$/.test(value)) return; setTagEditColorHex(value); if (/^#[0-9a-fA-F]{6}$/.test(value)) setTagEditColor(value); }} placeholder="#48aff5" aria-label="Custom edit tag color hex" /></div><label className="tag-keyword-entry">Keywords<input value={tagEditKeywords} onChange={(event) => setTagEditKeywords(event.target.value)} placeholder="e.g. project, launch" /></label><div className="tag-editor-actions"><button type="submit">Save</button><button type="button" className="delete-tag-button" onClick={() => void replaceTag(selectedTag)} aria-label="Delete tag"><Trash2 size={13} /></button></div></form>}</div>
             {visibleTags.map((tag) => (
-              <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={12} /> {tag}</span>
+              <span className="tag-chip" key={tag} style={tagChipStyle(tagColors[tag])}><Hash size={12} /> {tag}</span>
             ))}
             <label className="font-picker">
               Font
@@ -815,7 +828,7 @@ export default function Home() {
                     <div className="note-card-top">
                       <div className="note-tags">
                         {note.tags?.map((tag) => (
-                          <span className="tag-chip" key={tag} style={{ borderColor: tagColors[tag] ?? "#294761", color: tagColors[tag] ?? undefined }}><Hash size={11} /> {tag}</span>
+                          <span className="tag-chip" key={tag} style={tagChipStyle(tagColors[tag])}><Hash size={11} /> {tag}</span>
                         ))}
                       </div>
                       <div className="note-times">

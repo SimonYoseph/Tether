@@ -295,6 +295,7 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .note-card.is-trash-hover { background: rgba(21, 31, 41, .24); border-color: #ff927b; box-shadow: 0 10px 24px rgba(255, 111, 97, .2); }
 .note-card.is-trash-hover { opacity: .28; background: transparent !important; }
 .note-card > p { color: #edf3f7; }
+.note-card > h3, .note-card > ul, .note-card > ol, .note-card li { color: #edf3f7; }
 .audience-strip, footer { border: 0; }
 :root[data-theme="charcoal"] .app-shell { background: #20252b; }
 :root[data-theme="charcoal"] .notes-canvas { background: #20252b; }
@@ -327,4 +328,5 @@ footer { margin-top: 30px; color: #5f7483; }
 :root[data-theme="light"] .connection-strip strong { color: #283746; }
 :root[data-theme="light"] .connection-strip small { color: #526a79; }
 :root[data-theme="light"] .add-note-panel .capture-form > input, :root[data-theme="light"] .add-note-panel .capture-form textarea { color: #283746; }
+.tag-chip { font-weight: 800 !important; }
 .brand-wordmark { -webkit-text-stroke: .35px #0b141d; text-shadow: 1px 1px 0 #071019, 2px 2px 0 #172a3d, -1px -1px 0 rgba(255, 255, 255, .16), 0 5px 10px rgba(0, 0, 0, .28); }
