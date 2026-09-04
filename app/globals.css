@@ -122,8 +122,8 @@ input::placeholder, textarea::placeholder { color: #91a09b; }
 .note-card-top { justify-content: space-between; gap: 8px; }
 .note-tags { flex-wrap: wrap; gap: 7px; color: var(--accent); font: 700 9px var(--ui-font); letter-spacing: .06em; text-transform: uppercase; }
 .note-card time { color: var(--muted); font: 9px Arial, sans-serif; text-transform: uppercase; }
-.note-card > p { margin: 18px 0 4px; color: var(--ink); font: 600 16px/1.3 var(--ui-font); text-align: left; }
-.note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 700 14px/1.3 var(--ui-font); text-align: left; }
+.note-card > p { margin: 18px 0 4px; color: var(--ink); font: 700 17px/1.3 var(--ui-font); text-align: left; }
+.note-card > h3 { margin: 16px 0 8px; color: var(--ink); font: 750 15px/1.3 var(--ui-font); text-align: left; }
 .list-tools { display: flex; gap: 8px; padding: 8px 14px 0; }
 .list-tools button { display: grid; width: 30px; height: 28px; place-items: center; border: 1px solid #294761; border-radius: 6px; background: #172a3d; color: #d6edfc; font: 700 13px var(--ui-font); }
 .list-tools button:hover { border-color: #48aff5; color: #48aff5; }
@@ -185,6 +185,8 @@ footer { justify-content: space-between; color: var(--muted); font-size: 9px; le
 .add-note-panel.is-open { max-height: 700px; border-width: 1px; opacity: 1; padding: 18px; pointer-events: auto; transform: translateY(0); }
 .add-note-panel .capture-form { border: 0; background: transparent; }
 .add-note-panel .capture-form > input, .add-note-panel .capture-form textarea { color: #edf3f7; }
+.add-note-panel .capture-form textarea { min-height: 84px; transition: min-height .35s cubic-bezier(.22, 1, .36, 1); }
+.add-note-panel.has-content .capture-form textarea { min-height: 152px; }
 .add-note-panel .capture-form > input:first-child { width: 46px; height: 46px; border: 1px solid #48aff5; border-radius: 50%; background: #1685d2 url("/title-icon.svg?v=2") center / 24px 24px no-repeat; padding: 0; color: transparent; text-align: center; transition: width .35s cubic-bezier(.22, 1, .36, 1), border-radius .35s ease, padding .35s ease, color .2s ease; }
 .add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { width: 100%; border-radius: 7px; padding: 14px; color: #edf3f7; text-align: left; }
 .add-note-panel .capture-form > input:first-child:focus, .add-note-panel .capture-form > input:first-child:not(:placeholder-shown) { background-image: none; }
